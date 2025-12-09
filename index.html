@@ -18,9 +18,6 @@
             --gray: #f5f5f5;
             --text: #333;
             --star: #ffc107;
-            --info-bg: #fff3cd;
-            --info-border: #ffeaa7;
-            --info-text: #856404;
         }
         
         * {
@@ -646,26 +643,15 @@
             border-left: 4px solid var(--success);
         }
         
-        /* Commission Info Box */
-        .commission-info {
-            background-color: var(--info-bg);
-            border: 1px solid var(--info-border);
-            border-radius: 5px;
+        /* Info Message */
+        .info-message {
+            background-color: #e8f4fc;
+            color: var(--primary);
             padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .commission-info h4 {
-            color: var(--info-text);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .commission-info p {
-            color: var(--info-text);
-            margin: 0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
         }
     </style>
 </head>
@@ -750,6 +736,10 @@
                     <p>2. <strong>Compila il tuo profilo</strong> con esperienza e specializzazioni</p>
                     <p>3. <strong>Imposta la tua disponibilità</strong> oraria e territoriale</p>
                     <p>4. <strong>Inizia a ricevere richieste</strong> dalle famiglie nella tua zona</p>
+                    <p class="info-message" style="margin-top: 20px;">
+                        <strong>Importante:</strong> La piattaforma applica una commissione del 10% su ogni servizio. 
+                        Il pagamento viene versato sul conto corrente del caregiver solo dopo il completamento del servizio.
+                    </p>
                 </div>
             </div>
         </section>
@@ -787,7 +777,8 @@
                         <li><strong>Recensioni Verificate:</strong> Esperienze reali di altri clienti</li>
                         <li><strong>Chat Diretta:</strong> Parla subito con il caregiver tramite chat live</li>
                         <li><strong>Gestione Semplice:</strong> Profili facili da creare e aggiornare</li>
-                        <li><strong>Il pagamento effettuato sarà trasferito al caregiver solo una volta completato il servizio.</strong>
+                        <li><strong>Pagamento Sicuro:</strong> Il pagamento viene trasferito al caregiver solo una volta completato il servizio</li>
+                        <li><strong>Commissione Trasparente:</strong> Solo il 10% di commissione sui servizi completati</li>
                     </ul>
                 </div>
             </div>
@@ -1133,7 +1124,7 @@
                         <input type="email" id="registerEmail" placeholder="la.tua@email.com" required>
                     </div>
                     <div class="form-group">
-                        <label for="registerPhone">Numero di Telefono *</label>
+                        <label for="registerPhone">Numero di telefono *</label>
                         <input type="tel" id="registerPhone" placeholder="+39 123 456 7890" required>
                     </div>
                     <div class="form-group">
@@ -1144,12 +1135,6 @@
                         <label for="registerConfirmPassword">Conferma Password *</label>
                         <input type="password" id="registerConfirmPassword" placeholder="••••••••" required>
                     </div>
-                    
-                    <div class="commission-info">
-                        <h4><i class="fas fa-info-circle"></i> Informativa Importante per Caregiver</h4>
-                        <p><strong>Commissione di servizio:</strong> MandamiUno trattiene una commissione del <strong>10%</strong> su ogni transazione completata attraverso la piattaforma. La commissione viene applicata solo quando il pagamento viene effettuato tramite il nostro sistema di pagamento sicuro.</p>
-                    </div>
-                    
                     <button class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="register()">
                         <i class="fas fa-user-plus"></i> Registrati
                     </button>
@@ -1245,12 +1230,12 @@
         // Register function
         async function register() {
             const email = document.getElementById('registerEmail').value;
-            const phone = document.getElementById('registerPhone').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const phone = document.getElementById('registerPhone').value;
             
-            if (!email || !phone || !password || !confirmPassword) {
-                alert('Per favore compila tutti i campi obbligatori');
+            if (!email || !password || !confirmPassword || !phone) {
+                alert('Per favore compila tutti i campi');
                 return;
             }
             
@@ -1277,7 +1262,7 @@
                 
                 if (error) throw error;
                 
-                // Success - create profile record with phone
+                // Success - create profile record
                 if (data.user) {
                     const { error: profileError } = await supabase
                         .from('profiles')
@@ -1291,7 +1276,7 @@
                     if (profileError) throw profileError;
                 }
                 
-                alert('Registrazione completata! Controlla la tua email per confermare l\'account. Puoi ora creare il tuo profilo caregiver.');
+                alert('Registrazione completata! Controlla la tua email per confermare l\'account.');
                 switchAuthTab('login');
                 
             } catch (error) {
@@ -1353,7 +1338,14 @@
             const authContent = document.getElementById('authContent');
             authContent.innerHTML = `
                 <h2 style="color: var(--primary); margin-bottom: 20px;">Crea il tuo Profilo Caregiver</h2>
-                <p style="margin-bottom: 20px;">Compila il form per creare il tuo profilo di caregiver.</p>
+                
+                <div class="info-message">
+                    <strong>Informazioni importanti sulla commissione:</strong><br>
+                    • Commissione del 10% applicata su ogni servizio<br>
+                    • Il pagamento viene versato sul tuo conto corrente solo dopo il completamento del servizio<br>
+                    • I pagamenti sono gestiti in modo sicuro tramite la piattaforma<br>
+                    • Potrai specificare i tuoi dati bancari dopo la creazione del profilo
+                </div>
                 
                 <form id="createProfileForm">
                     <div class="form-row">
@@ -1362,19 +1354,8 @@
                             <input type="text" id="caregiverName" required placeholder="Mario Rossi">
                         </div>
                         <div class="form-group">
-                            <label for="caregiverPhone">Telefono *</label>
-                            <input type="tel" id="caregiverPhone" required placeholder="+39 123 456 7890" value="${currentUser.user_metadata?.phone || ''}">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
                             <label for="caregiverExperience">Esperienza</label>
                             <input type="text" id="caregiverExperience" placeholder="es. 5 anni">
-                        </div>
-                        <div class="form-group">
-                            <label for="caregiverEmail">Email *</label>
-                            <input type="email" id="caregiverEmail" required value="${currentUser.email}" readonly style="background-color: #f5f5f5;">
                         </div>
                     </div>
                     
@@ -1452,6 +1433,11 @@
                 <h2 style="color: var(--primary); margin-bottom: 20px;">Gestisci il tuo Profilo Caregiver</h2>
                 <p style="margin-bottom: 20px;">Modifica il tuo profilo di caregiver.</p>
                 
+                <div class="info-message">
+                    <strong>Commissione attiva:</strong> 10% su ogni servizio completato.<br>
+                    I pagamenti vengono elaborati al termine di ogni servizio.
+                </div>
+                
                 <form id="editProfileForm">
                     <div class="form-row">
                         <div class="form-group">
@@ -1459,19 +1445,8 @@
                             <input type="text" id="editCaregiverName" required value="${currentCaregiverProfile.name || ''}" placeholder="Mario Rossi">
                         </div>
                         <div class="form-group">
-                            <label for="editCaregiverPhone">Telefono *</label>
-                            <input type="tel" id="editCaregiverPhone" required value="${currentCaregiverProfile.phone || currentUser.user_metadata?.phone || ''}" placeholder="+39 123 456 7890">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
                             <label for="editCaregiverExperience">Esperienza</label>
                             <input type="text" id="editCaregiverExperience" value="${currentCaregiverProfile.experience || ''}" placeholder="es. 5 anni">
-                        </div>
-                        <div class="form-group">
-                            <label for="editCaregiverEmail">Email *</label>
-                            <input type="email" id="editCaregiverEmail" required value="${currentUser.email}" readonly style="background-color: #f5f5f5;">
                         </div>
                     </div>
                     
@@ -1518,6 +1493,11 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="editBankAccount">Conto Corrente (IBAN)</label>
+                        <input type="text" id="editBankAccount" value="${currentCaregiverProfile.bank_account || ''}" placeholder="IT12A1234567890123456789012">
+                    </div>
+                    
+                    <div class="form-group">
                         <label>
                             <input type="checkbox" id="editCaregiverPublished" ${currentCaregiverProfile.is_published ? 'checked' : ''}>
                             Pubblica il profilo (sarà visibile a tutti)
@@ -1551,8 +1531,6 @@
             const profileData = {
                 user_id: currentUser.id,
                 name: document.getElementById('caregiverName').value,
-                phone: document.getElementById('caregiverPhone').value,
-                email: document.getElementById('caregiverEmail').value,
                 experience: document.getElementById('caregiverExperience').value,
                 city: document.getElementById('caregiverCity').value,
                 zone: document.getElementById('caregiverZone').value,
@@ -1562,11 +1540,13 @@
                 specializations: document.getElementById('caregiverSpecializations').value.split(',').map(s => s.trim()).filter(s => s),
                 description: document.getElementById('caregiverDescription').value,
                 education: document.getElementById('caregiverEducation').value,
+                phone: currentUser.user_metadata?.phone || '',
+                commission_rate: 0.10, // Commissione del 10%
                 is_published: document.getElementById('caregiverPublished').checked
             };
             
-            if (!profileData.name || !profileData.phone || !profileData.email || !profileData.city) {
-                alert('Nome, telefono, email e città sono campi obbligatori');
+            if (!profileData.name || !profileData.city) {
+                alert('Nome e città sono campi obbligatori');
                 return;
             }
             
@@ -1601,7 +1581,6 @@
             
             const profileData = {
                 name: document.getElementById('editCaregiverName').value,
-                phone: document.getElementById('editCaregiverPhone').value,
                 experience: document.getElementById('editCaregiverExperience').value,
                 city: document.getElementById('editCaregiverCity').value,
                 zone: document.getElementById('editCaregiverZone').value,
@@ -1611,12 +1590,13 @@
                 specializations: document.getElementById('editCaregiverSpecializations').value.split(',').map(s => s.trim()).filter(s => s),
                 description: document.getElementById('editCaregiverDescription').value,
                 education: document.getElementById('editCaregiverEducation').value,
+                bank_account: document.getElementById('editBankAccount').value,
                 is_published: document.getElementById('editCaregiverPublished').checked,
                 updated_at: new Date()
             };
             
-            if (!profileData.name || !profileData.phone || !profileData.city) {
-                alert('Nome, telefono e città sono campi obbligatori');
+            if (!profileData.name || !profileData.city) {
+                alert('Nome e città sono campi obbligatori');
                 return;
             }
             
@@ -1707,11 +1687,6 @@
                         <div>
                             <strong>Tariffa oraria:</strong> ${profile.hourly_rate || 'Da concordare'}
                         </div>
-                        ${profile.phone ? `
-                        <div>
-                            <strong>Contatto:</strong> ${profile.phone}
-                        </div>
-                        ` : ''}
                     </div>
                     
                     <div style="margin-bottom: 25px;">
