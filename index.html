@@ -844,6 +844,20 @@
             checkAuthStatus();
             loadCaregiverProfiles();
             setupEventListeners();
+            
+            // Listen for auth state changes
+            supabase.auth.onAuthStateChange(async (event, session) => {
+                if (session) {
+                    currentUser = session.user;
+                    // Load caregiver profile when auth state changes
+                    await loadUserCaregiverProfile(session.user.id);
+                    updateUIForLoggedInUser(session.user);
+                } else {
+                    currentUser = null;
+                    currentCaregiverProfile = null;
+                    updateUIForLoggedOutUser();
+                }
+            });
         });
         
         // Check if user is logged in
@@ -853,7 +867,7 @@
             if (user) {
                 currentUser = user;
                 
-                // Load caregiver profile before updating UI
+                // Load caregiver profile
                 await loadUserCaregiverProfile(user.id);
                 updateUIForLoggedInUser(user);
             } else {
@@ -864,16 +878,25 @@
         // Load user's caregiver profile
         async function loadUserCaregiverProfile(userId) {
             try {
+                console.log('Loading caregiver profile for user:', userId);
                 const { data: caregiverProfile, error } = await supabase
                     .from('caregiver_profiles')
                     .select('*')
                     .eq('user_id', userId)
                     .single();
                 
-                if (error && error.code !== 'PGRST116') { // PGRST116 means "no rows returned"
-                    console.error('Error loading caregiver profile:', error);
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        // No profile found - this is normal
+                        console.log('No caregiver profile found for user');
+                        currentCaregiverProfile = null;
+                    } else {
+                        console.error('Error loading caregiver profile:', error);
+                        currentCaregiverProfile = null;
+                    }
                 } else {
-                    currentCaregiverProfile = caregiverProfile || null;
+                    console.log('Caregiver profile loaded:', caregiverProfile);
+                    currentCaregiverProfile = caregiverProfile;
                 }
             } catch (error) {
                 console.error('Error in loadUserCaregiverProfile:', error);
@@ -897,6 +920,8 @@
                     </div>
                 </div>
             `;
+            
+            console.log('Updating UI. currentCaregiverProfile:', currentCaregiverProfile);
             
             if (!currentCaregiverProfile) {
                 html += `<a href="#" class="create-caregiver-btn" onclick="openCreateProfileModal()">Crea Profilo Caregiver</a>`;
@@ -1198,15 +1223,8 @@
                 
                 if (error) throw error;
                 
-                // Success
-                currentUser = data.user;
-                updateUIForLoggedInUser(data.user);
+                // Success - the auth state change listener will handle the rest
                 closeAuthModal();
-                
-                // Load caregiver profile after login
-                await loadUserCaregiverProfile(data.user.id);
-                
-                // Show welcome message
                 showMessage('success', `Benvenuto ${data.user.email}!`);
                 
             } catch (error) {
@@ -1297,9 +1315,7 @@
                 const { error } = await supabase.auth.signOut();
                 if (error) throw error;
                 
-                currentUser = null;
-                currentCaregiverProfile = null;
-                updateUIForLoggedOutUser();
+                // The auth state change listener will handle the rest
                 showMessage('success', 'Logout effettuato con successo!');
                 
             } catch (error) {
@@ -1402,23 +1418,19 @@
         }
         
         // Open edit profile modal
-        function openEditProfileModal() {
+        async function openEditProfileModal() {
             if (!currentUser) {
                 alert('Per favore accedi prima di modificare il profilo');
                 openAuthModal();
                 return;
             }
             
-            // If currentCaregiverProfile is null, try to reload it
+            // Always reload the profile to ensure we have the latest data
+            await loadUserCaregiverProfile(currentUser.id);
+            
             if (!currentCaregiverProfile) {
-                loadUserCaregiverProfile(currentUser.id).then(() => {
-                    if (currentCaregiverProfile) {
-                        openEditProfileModal(); // Call the function again after loading the profile
-                    } else {
-                        alert('Non hai ancora un profilo caregiver. Creane uno nuovo.');
-                        openCreateProfileModal();
-                    }
-                });
+                alert('Non hai ancora un profilo caregiver. Creane uno nuovo.');
+                openCreateProfileModal();
                 return;
             }
             
