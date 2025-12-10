@@ -94,6 +94,8 @@
         /* Hero Section */
         .hero {
             background: linear-gradient(rgba(44, 125, 160, 0.9), rgba(44, 125, 160, 0.8));
+            background-size: cover;
+            background-position: center;
             color: white;
             padding: 80px 0;
             text-align: center;
@@ -413,6 +415,13 @@
             margin-top: 30px;
         }
         
+        .reviews-section h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
         .review-item {
             background-color: var(--gray);
             padding: 20px;
@@ -633,124 +642,6 @@
             margin-bottom: 15px;
             border-left: 4px solid var(--success);
         }
-        
-        /* New Styles for Reviews */
-        .reviews-container {
-            margin-top: 30px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        
-        .review-form {
-            background-color: var(--light);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .stars-rating {
-            display: flex;
-            flex-direction: row-reverse;
-            justify-content: flex-end;
-            margin-bottom: 15px;
-        }
-        
-        .stars-rating input {
-            display: none;
-        }
-        
-        .stars-rating label {
-            font-size: 2rem;
-            color: #ddd;
-            cursor: pointer;
-            padding: 0 5px;
-        }
-        
-        .stars-rating input:checked ~ label,
-        .stars-rating label:hover,
-        .stars-rating label:hover ~ label {
-            color: var(--star);
-        }
-        
-        .no-reviews {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            background-color: var(--gray);
-            border-radius: 8px;
-        }
-        
-        .verified-badge {
-            background-color: var(--success);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-left: 10px;
-        }
-        
-        .commission-notice {
-            background-color: #e8f4ff;
-            border-left: 4px solid var(--primary);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .commission-notice strong {
-            color: var(--primary);
-        }
-        
-        .profile-section-title {
-            color: var(--primary);
-            margin: 25px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--light);
-        }
-        
-        /* Phone Input Styles */
-        .phone-input-group {
-            display: flex;
-            align-items: center;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        
-        .phone-prefix {
-            padding: 15px;
-            background-color: #f5f5f5;
-            border-right: 1px solid #ddd;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .phone-input {
-            flex: 1;
-            border: none;
-            padding: 15px;
-            font-size: 1.1rem;
-        }
-        
-        .rating-display {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .rating-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--star);
-        }
-        
-        .reviews-count {
-            color: #666;
-            font-size: 0.9rem;
-        }
     </style>
 </head>
 <body>
@@ -834,10 +725,6 @@
                     <p>2. <strong>Compila il tuo profilo</strong> con esperienza e specializzazioni</p>
                     <p>3. <strong>Imposta la tua disponibilità</strong> oraria e territoriale</p>
                     <p>4. <strong>Inizia a ricevere richieste</strong> dalle famiglie nella tua zona</p>
-                    
-                    <div class="commission-notice" style="margin-top: 25px;">
-                        <strong>Importante:</strong> Per ogni servizio completato, viene applicata una commissione del 10% sul totale. Il pagamento viene rilasciato al caregiver solo al completamento del servizio.
-                    </div>
                 </div>
             </div>
         </section>
@@ -850,7 +737,6 @@
             </div>
             
             <div class="results-container" id="resultsList">
-                <!-- I caregiver verranno caricati qui -->
                 <div class="loading">
                     <div class="spinner"></div>
                     <p>Caricamento profili caregiver...</p>
@@ -876,7 +762,7 @@
                         <li><strong>Recensioni Verificate:</strong> Esperienze reali di altri clienti</li>
                         <li><strong>Chat Diretta:</strong> Parla subito con il caregiver tramite chat live</li>
                         <li><strong>Gestione Semplice:</strong> Profili facili da creare e aggiornare</li>
-                        <li><strong>Pagamento Sicuro:</strong> Il pagamento viene rilasciato al caregiver solo al completamento del servizio</li>
+                        <li><strong>Il pagamento effettuato sarà trasferito al caregiver solo una volta completato il servizio.</strong>
                     </ul>
                 </div>
             </div>
@@ -943,127 +829,56 @@
     </footer>
 
     <script>
-        // Inizializza Supabase
+        // Initialize Supabase
         const supabaseUrl = 'https://pjpwwjahkagakovsrexx.supabase.co';
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqcHd3amFoa2FnYWtvdnNyZXh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NTE0MTcsImV4cCI6MjA3OTAyNzQxN30.OqG2DhCGaQ0YeogxU3Z1kBRdbN_ZHWom8Xt48JkfJ4w';
         
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
         
-        // Variabili di stato
+        // State variables
         let currentUser = null;
         let currentCaregiverProfile = null;
-        let currentViewingProfileId = null;
+        let userProfileData = null;
         
-        // Simulazione di dati per i caregiver (in assenza di database reale)
-        const mockCaregivers = [
-            {
-                id: '1',
-                name: 'Maria Rossi',
-                experience: '10 anni',
-                city: 'Milano',
-                zone: 'Centro',
-                languages: 'Italiano, Inglese',
-                hourly_rate: '€15-20/ora',
-                availability: 'Lun-Ven 9-18',
-                specializations: ['Anziani', 'Alzheimer'],
-                description: 'Caregiver esperta con 10 anni di esperienza nella cura di anziani e pazienti con Alzheimer. Appassionata e dedicata al mio lavoro.',
-                education: 'Diploma in Assistenza Sanitaria, Corso di formazione per Alzheimer',
-                rating: 4.8,
-                total_reviews: 12,
-                is_published: true
-            },
-            {
-                id: '2',
-                name: 'Giuseppe Verdi',
-                experience: '5 anni',
-                city: 'Milano',
-                zone: 'Navigli',
-                languages: 'Italiano, Spagnolo',
-                hourly_rate: '€12-18/ora',
-                availability: 'Tutti i giorni 8-20',
-                specializations: ['Disabilità', 'Fisioterapia'],
-                description: 'Specializzato nell\'assistenza a persone con disabilità motorie. Esperto in tecniche di mobilizzazione e supporto quotidiano.',
-                education: 'Laureato in Scienze Motorie, Corso di assistenza alla disabilità',
-                rating: 4.5,
-                total_reviews: 8,
-                is_published: true
-            },
-            {
-                id: '3',
-                name: 'Anna Bianchi',
-                experience: '3 anni',
-                city: 'Roma',
-                zone: 'Prati',
-                languages: 'Italiano, Francese',
-                hourly_rate: '€14-19/ora',
-                availability: 'Mar-Sab 8-16',
-                specializations: ['Post-operatorio', 'Assistenza domiciliare'],
-                description: 'Giovane caregiver specializzata in assistenza post-operatoria e cure domiciliari. Paziente e attenta alle esigenze del paziente.',
-                education: 'Diploma socio-sanitario, Corso di primo soccorso',
-                rating: 4.2,
-                total_reviews: 5,
-                is_published: true
-            }
-        ];
-        
-        // Simulazione di recensioni
-        const mockReviews = {
-            '1': [
-                {
-                    id: 'r1',
-                    author_name: 'Luigi Neri',
-                    rating: 5,
-                    comment: 'Maria è stata fantastica con mia madre. Professionale, puntuale e molto gentile. La consiglio vivamente!',
-                    created_at: '2023-10-15',
-                    is_verified: true
-                },
-                {
-                    id: 'r2',
-                    author_name: 'Sofia Ricci',
-                    rating: 4,
-                    comment: 'Servizio eccellente, mio padre si è trovato benissimo. Un piccolo problema di comunicazione iniziale, ma tutto risolto.',
-                    created_at: '2023-09-22',
-                    is_verified: true
-                }
-            ],
-            '2': [
-                {
-                    id: 'r3',
-                    author_name: 'Marco Gialli',
-                    rating: 5,
-                    comment: 'Giuseppe è molto competente e paziente. Ha aiutato mio fratello con disabilità motoria in modo eccellente.',
-                    created_at: '2023-11-05',
-                    is_verified: true
-                }
-            ]
-        };
-        
-        // Inizializza l'app
+        // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             checkAuthStatus();
             loadCaregiverProfiles();
             setupEventListeners();
         });
         
-        // Controlla se l'utente è loggato
+        // Check if user is logged in
         async function checkAuthStatus() {
-            try {
-                const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                currentUser = user;
                 
-                if (user) {
-                    currentUser = user;
-                    updateUIForLoggedInUser(user);
-                } else {
-                    updateUIForLoggedOutUser();
-                }
-            } catch (error) {
-                console.log('Auth check non disponibile, usando demo mode');
+                // Get user profile data including phone
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+                
+                userProfileData = profile;
+                updateUIForLoggedInUser(user, profile);
+                
+                // Check if user has a caregiver profile
+                const { data: caregiverProfile } = await supabase
+                    .from('caregiver_profiles')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .single();
+                
+                currentCaregiverProfile = caregiverProfile;
+            } else {
                 updateUIForLoggedOutUser();
             }
         }
         
-        // Aggiorna UI per utente loggato
-        function updateUIForLoggedInUser(user) {
+        // Update UI for logged in user
+        function updateUIForLoggedInUser(user, profile) {
             const userActions = document.getElementById('userActions');
             const userEmail = user.email;
             const userName = userEmail.split('@')[0];
@@ -1079,13 +894,13 @@
                 </div>
             `;
             
-            // Controlla se l'utente ha un profilo caregiver (simulato)
-            const hasProfile = currentCaregiverProfile !== null;
+            // Aggiungi il pulsante per modificare il profilo utente
+            html += `<button class="btn btn-warning" onclick="openEditUserProfileModal()">Modifica Profilo</button>`;
             
-            if (!hasProfile) {
+            if (!currentCaregiverProfile) {
                 html += `<a href="#" class="create-caregiver-btn" onclick="openCreateProfileModal()">Crea Profilo Caregiver</a>`;
             } else {
-                html += `<a href="#" class="create-caregiver-btn" onclick="openEditProfileModal()">Gestisci Profilo</a>`;
+                html += `<a href="#" class="create-caregiver-btn" onclick="openEditProfileModal()">Gestisci Profilo Caregiver</a>`;
             }
             
             html += `<button class="btn btn-outline" onclick="logout()">Esci</button>`;
@@ -1093,7 +908,7 @@
             userActions.innerHTML = html;
         }
         
-        // Aggiorna UI per utente non loggato
+        // Update UI for logged out user
         function updateUIForLoggedOutUser() {
             const userActions = document.getElementById('userActions');
             userActions.innerHTML = `
@@ -1101,97 +916,25 @@
             `;
         }
         
-        // Carica i profili caregiver
-        function loadCaregiverProfiles() {
+        // Load caregiver profiles
+        async function loadCaregiverProfiles() {
             const resultsList = document.getElementById('resultsList');
             
-            if (mockCaregivers.length === 0) {
-                resultsList.innerHTML = `
-                    <div class="caregiver-card">
-                        <div class="caregiver-info">
-                            <h3>Nessun caregiver trovato</h3>
-                            <p>Non sono stati trovati caregiver disponibili al momento.</p>
-                            <p>Diventa il primo caregiver nella tua città!</p>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            let resultsHTML = '';
-            mockCaregivers.forEach(profile => {
-                const specializations = profile.specializations || [];
-                const specializationsHTML = specializations.map(spec => 
-                    `<span class="specialization-tag">${spec}</span>`
-                ).join('');
+            try {
+                const { data: caregiverProfiles, error } = await supabase
+                    .from('caregiver_profiles')
+                    .select('*')
+                    .eq('is_published', true);
                 
-                resultsHTML += `
-                    <div class="caregiver-card" data-caregiver-id="${profile.id}">
-                        <div class="caregiver-rating">
-                            <i class="fas fa-star"></i> ${profile.rating ? profile.rating.toFixed(1) : 'Nuovo'}
-                        </div>
-                        <div class="caregiver-info">
-                            <h3>${profile.name}</h3>
-                            <div class="caregiver-details">
-                                <div class="detail-item">
-                                    <span class="detail-label">Esperienza:</span>
-                                    <span class="detail-value">${profile.experience || 'Non specificata'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Zona:</span>
-                                    <span class="detail-value">${profile.zone || 'Non specificata'}, ${profile.city || ''}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Tariffa:</span>
-                                    <span class="detail-value">${profile.hourly_rate || 'Da concordare'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Recensioni:</span>
-                                    <span class="detail-value">${profile.total_reviews || 0} recensioni</span>
-                                </div>
-                            </div>
-                            <div class="caregiver-specializations">
-                                ${specializationsHTML}
-                            </div>
-                            <p>${profile.description ? profile.description.substring(0, 150) + '...' : 'Nessuna descrizione disponibile.'}</p>
-                        </div>
-                        <div class="caregiver-actions">
-                            <button class="btn btn-primary" onclick="viewProfile('${profile.id}')">Vedi Profilo Completo</button>
-                            <button class="btn btn-outline" onclick="openChat('${profile.id}')">Contatta</button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            resultsList.innerHTML = resultsHTML;
-        }
-        
-        // Setup event listeners
-        function setupEventListeners() {
-            // Search form
-            document.getElementById('searchForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const city = document.getElementById('city').value;
+                if (error) throw error;
                 
-                if (!city.trim()) {
-                    alert('Per favore inserisci il nome di una città');
-                    return;
-                }
-                
-                // Filtra i caregiver per città
-                const filteredCaregivers = mockCaregivers.filter(profile => 
-                    profile.city.toLowerCase().includes(city.toLowerCase())
-                );
-                
-                const resultsList = document.getElementById('resultsList');
-                
-                if (filteredCaregivers.length === 0) {
+                if (!caregiverProfiles || caregiverProfiles.length === 0) {
                     resultsList.innerHTML = `
                         <div class="caregiver-card">
                             <div class="caregiver-info">
-                                <h3>Nessun caregiver trovato a ${city}</h3>
-                                <p>Non sono stati trovati caregiver disponibili in questa città.</p>
-                                <p>Prova con un'altra città o verifica più tardi.</p>
+                                <h3>Nessun caregiver trovato</h3>
+                                <p>Non sono stati trovati caregiver disponibili al momento.</p>
+                                <p>Diventa il primo caregiver nella tua città!</p>
                             </div>
                         </div>
                     `;
@@ -1199,7 +942,7 @@
                 }
                 
                 let resultsHTML = '';
-                filteredCaregivers.forEach(profile => {
+                caregiverProfiles.forEach(profile => {
                     const specializations = profile.specializations || [];
                     const specializationsHTML = specializations.map(spec => 
                         `<span class="specialization-tag">${spec}</span>`
@@ -1208,7 +951,7 @@
                     resultsHTML += `
                         <div class="caregiver-card" data-caregiver-id="${profile.id}">
                             <div class="caregiver-rating">
-                                <i class="fas fa-star"></i> ${profile.rating ? profile.rating.toFixed(1) : 'Nuovo'}
+                                <i class="fas fa-star"></i> ${profile.rating || 'Nuovo'}
                             </div>
                             <div class="caregiver-info">
                                 <h3>${profile.name}</h3>
@@ -1226,14 +969,14 @@
                                         <span class="detail-value">${profile.hourly_rate || 'Da concordare'}</span>
                                     </div>
                                     <div class="detail-item">
-                                        <span class="detail-label">Recensioni:</span>
-                                        <span class="detail-value">${profile.total_reviews || 0} recensioni</span>
+                                        <span class="detail-label">Disponibilità:</span>
+                                        <span class="detail-value">${profile.availability || 'Da concordare'}</span>
                                     </div>
                                 </div>
                                 <div class="caregiver-specializations">
                                     ${specializationsHTML}
                                 </div>
-                                <p>${profile.description ? profile.description.substring(0, 150) + '...' : 'Nessuna descrizione disponibile.'}</p>
+                                <p>${profile.description || 'Nessuna descrizione disponibile.'}</p>
                             </div>
                             <div class="caregiver-actions">
                                 <button class="btn btn-primary" onclick="viewProfile('${profile.id}')">Vedi Profilo Completo</button>
@@ -1244,10 +987,107 @@
                 });
                 
                 resultsList.innerHTML = resultsHTML;
+                
+            } catch (error) {
+                console.error('Error loading caregiver profiles:', error);
+                resultsList.innerHTML = `
+                    <div class="error-message">
+                        <p>Errore nel caricamento dei profili. Riprova più tardi.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search form
+            document.getElementById('searchForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const city = document.getElementById('city').value;
+                
+                if (!city.trim()) {
+                    alert('Per favore inserisci il nome di una città');
+                    return;
+                }
+                
+                try {
+                    const { data: caregiverProfiles, error } = await supabase
+                        .from('caregiver_profiles')
+                        .select('*')
+                        .ilike('city', `%${city}%`)
+                        .eq('is_published', true);
+                    
+                    if (error) throw error;
+                    
+                    const resultsList = document.getElementById('resultsList');
+                    
+                    if (!caregiverProfiles || caregiverProfiles.length === 0) {
+                        resultsList.innerHTML = `
+                            <div class="caregiver-card">
+                                <div class="caregiver-info">
+                                    <h3>Nessun caregiver trovato a ${city}</h3>
+                                    <p>Non sono stati trovati caregiver disponibili in questa città.</p>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    let resultsHTML = '';
+                    caregiverProfiles.forEach(profile => {
+                        const specializations = profile.specializations || [];
+                        const specializationsHTML = specializations.map(spec => 
+                            `<span class="specialization-tag">${spec}</span>`
+                        ).join('');
+                        
+                        resultsHTML += `
+                            <div class="caregiver-card" data-caregiver-id="${profile.id}">
+                                <div class="caregiver-rating">
+                                    <i class="fas fa-star"></i> ${profile.rating || 'Nuovo'}
+                                </div>
+                                <div class="caregiver-info">
+                                    <h3>${profile.name}</h3>
+                                    <div class="caregiver-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Esperienza:</span>
+                                            <span class="detail-value">${profile.experience || 'Non specificata'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Zona:</span>
+                                            <span class="detail-value">${profile.zone || 'Non specificata'}, ${profile.city || ''}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Tariffa:</span>
+                                            <span class="detail-value">${profile.hourly_rate || 'Da concordare'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Disponibilità:</span>
+                                            <span class="detail-value">${profile.availability || 'Da concordare'}</span>
+                                        </div>
+                                    </div>
+                                    <div class="caregiver-specializations">
+                                        ${specializationsHTML}
+                                    </div>
+                                    <p>${profile.description || 'Nessuna descrizione disponibile.'}</p>
+                                </div>
+                                <div class="caregiver-actions">
+                                    <button class="btn btn-primary" onclick="viewProfile('${profile.id}')">Vedi Profilo Completo</button>
+                                    <button class="btn btn-outline" onclick="openChat('${profile.id}')">Contatta</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    resultsList.innerHTML = resultsHTML;
+                    
+                } catch (error) {
+                    console.error('Error searching caregiver profiles:', error);
+                    alert('Errore nella ricerca. Riprova più tardi.');
+                }
             });
         }
         
-        // Apri modal auth
+        // Open auth modal
         function openAuthModal() {
             const authContent = document.getElementById('authContent');
             authContent.innerHTML = `
@@ -1260,11 +1100,11 @@
                     <h2 style="color: var(--primary); margin-bottom: 20px;">Accedi al tuo account</h2>
                     <div class="form-group">
                         <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" placeholder="la.tua@email.com" value="demo@mandamiuno.it">
+                        <input type="email" id="loginEmail" placeholder="la.tua@email.com">
                     </div>
                     <div class="form-group">
                         <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" placeholder="••••••••" value="demo123">
+                        <input type="password" id="loginPassword" placeholder="••••••••">
                     </div>
                     <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="login()">
                         <i class="fas fa-sign-in-alt"></i> Accedi
@@ -1276,47 +1116,22 @@
                 
                 <div id="registerForm" style="display: none;">
                     <h2 style="color: var(--primary); margin-bottom: 20px;">Crea un nuovo account</h2>
-                    
-                    <div class="commission-notice">
-                        <strong>Informazioni importanti:</strong>
-                        <p style="margin-top: 5px;">• Per ogni servizio completato, viene applicata una commissione del 10%</p>
-                        <p>• Il pagamento viene rilasciato al caregiver solo al completamento del servizio</p>
-                    </div>
-                    
                     <div class="form-group">
                         <label for="registerEmail">Email *</label>
                         <input type="email" id="registerEmail" placeholder="la.tua@email.com" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="registerPhone">Numero di Telefono *</label>
-                        <div class="phone-input-group">
-                            <div class="phone-prefix">+39</div>
-                            <input type="tel" id="registerPhone" class="phone-input" placeholder="1234567890" required pattern="[0-9]{9,10}">
-                        </div>
-                        <small style="color: #666; display: block; margin-top: 5px;">Formato: 10 cifre senza prefisso internazionale</small>
+                        <input type="tel" id="registerPhone" placeholder="+39 123 456 7890" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="registerPassword">Password (min. 6 caratteri) *</label>
                         <input type="password" id="registerPassword" placeholder="••••••••" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="registerConfirmPassword">Conferma Password *</label>
                         <input type="password" id="registerConfirmPassword" placeholder="••••••••" required>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="userType">Tipo di Utente *</label>
-                        <select id="userType" required>
-                            <option value="">Seleziona...</option>
-                            <option value="family">Famiglia/Struttura</option>
-                            <option value="caregiver">Caregiver</option>
-                            <option value="both">Entrambi</option>
-                        </select>
-                    </div>
-                    
                     <button class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="register()">
                         <i class="fas fa-user-plus"></i> Registrati
                     </button>
@@ -1340,12 +1155,12 @@
             document.getElementById('authModal').style.display = 'flex';
         }
         
-        // Chiudi modal auth
+        // Close auth modal
         function closeAuthModal() {
             document.getElementById('authModal').style.display = 'none';
         }
         
-        // Cambia tab auth
+        // Switch auth tab
         function switchAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.getElementById('loginForm').style.display = 'none';
@@ -1363,13 +1178,13 @@
             }
         }
         
-        // Mostra form recupero password
+        // Show forgot password form
         function showForgotPassword() {
             switchAuthTab('forgot');
         }
         
-        // Login function (simulata)
-        function login() {
+        // Login function
+        async function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
@@ -1378,29 +1193,55 @@
                 return;
             }
             
-            // Simulazione login
-            currentUser = {
-                id: 'demo-user-123',
-                email: email,
-                user_metadata: { name: email.split('@')[0] }
-            };
-            
-            updateUIForLoggedInUser(currentUser);
-            closeAuthModal();
-            
-            showMessage('success', `Benvenuto ${email}!`);
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                // Success
+                currentUser = data.user;
+                
+                // Get user profile data
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+                
+                userProfileData = profile;
+                updateUIForLoggedInUser(data.user, profile);
+                closeAuthModal();
+                
+                // Check if user has caregiver profile
+                const { data: caregiverProfile } = await supabase
+                    .from('caregiver_profiles')
+                    .select('*')
+                    .eq('user_id', data.user.id)
+                    .single();
+                
+                currentCaregiverProfile = caregiverProfile;
+                
+                // Show welcome message
+                showMessage('success', `Benvenuto ${data.user.email}!`);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Errore durante il login: ' + error.message);
+            }
         }
         
-        // Register function (simulata)
-        function register() {
+        // Register function
+        async function register() {
             const email = document.getElementById('registerEmail').value;
             const phone = document.getElementById('registerPhone').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            const userType = document.getElementById('userType').value;
             
-            if (!email || !password || !confirmPassword || !phone || !userType) {
-                alert('Per favore compila tutti i campi obbligatori');
+            if (!email || !phone || !password || !confirmPassword) {
+                alert('Per favore compila tutti i campi');
                 return;
             }
             
@@ -1414,34 +1255,44 @@
                 return;
             }
             
-            // Validazione telefono
-            const phoneRegex = /^[0-9]{9,10}$/;
-            if (!phoneRegex.test(phone)) {
-                alert('Numero di telefono non valido. Inserisci 9 o 10 cifre.');
-                return;
-            }
-            
-            // Simulazione registrazione
-            currentUser = {
-                id: 'new-user-' + Date.now(),
-                email: email,
-                user_metadata: { 
-                    name: email.split('@')[0],
-                    phone: '+39' + phone,
-                    userType: userType
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            phone: phone
+                        }
+                    }
+                });
+                
+                if (error) throw error;
+                
+                // Success - create profile record with phone
+                if (data.user) {
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert({
+                            id: data.user.id,
+                            email: email,
+                            phone: phone,
+                            created_at: new Date()
+                        });
+                    
+                    if (profileError) throw profileError;
                 }
-            };
-            
-            alert('Registrazione completata con successo! Puoi ora accedere al tuo account.');
-            switchAuthTab('login');
-            
-            // Auto-fill login form
-            document.getElementById('loginEmail').value = email;
-            document.getElementById('loginPassword').value = password;
+                
+                alert('Registrazione completata! Controlla la tua email per confermare l\'account.');
+                switchAuthTab('login');
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Errore durante la registrazione: ' + error.message);
+            }
         }
         
-        // Reset password (simulata)
-        function resetPassword() {
+        // Reset password
+        async function resetPassword() {
             const email = document.getElementById('forgotEmail').value;
             
             if (!email) {
@@ -1449,19 +1300,268 @@
                 return;
             }
             
-            alert('Email di reset inviata! Controlla la tua casella di posta.');
-            switchAuthTab('login');
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin,
+                });
+                
+                if (error) throw error;
+                
+                alert('Email di reset inviata! Controlla la tua casella di posta.');
+                switchAuthTab('login');
+                
+            } catch (error) {
+                console.error('Reset password error:', error);
+                alert('Errore: ' + error.message);
+            }
         }
         
         // Logout
-        function logout() {
-            currentUser = null;
-            currentCaregiverProfile = null;
-            updateUIForLoggedOutUser();
-            showMessage('success', 'Logout effettuato con successo!');
+        async function logout() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                currentUser = null;
+                currentCaregiverProfile = null;
+                userProfileData = null;
+                updateUIForLoggedOutUser();
+                showMessage('success', 'Logout effettuato con successo!');
+                
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Errore durante il logout');
+            }
         }
         
-        // Apri modal creazione profilo
+        // Open edit user profile modal
+        function openEditUserProfileModal() {
+            if (!currentUser || !userProfileData) {
+                alert('Per favore accedi prima di modificare il profilo');
+                openAuthModal();
+                return;
+            }
+            
+            const authContent = document.getElementById('authContent');
+            authContent.innerHTML = `
+                <h2 style="color: var(--primary); margin-bottom: 20px;">Modifica Profilo Utente</h2>
+                <p style="margin-bottom: 20px;">Aggiorna le tue informazioni personali.</p>
+                
+                <form id="editUserProfileForm">
+                    <div class="form-group">
+                        <label for="editUserEmail">Email *</label>
+                        <input type="email" id="editUserEmail" value="${currentUser.email}" required readonly style="background-color: #f5f5f5;">
+                        <small style="color: #666;">L'email non può essere modificata</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editUserPhone">Numero di Telefono *</label>
+                        <input type="tel" id="editUserPhone" value="${userProfileData.phone || ''}" required placeholder="+39 123 456 7890">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editUserFullName">Nome Completo</label>
+                        <input type="text" id="editUserFullName" value="${userProfileData.full_name || ''}" placeholder="Mario Rossi">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editUserAddress">Indirizzo</label>
+                        <input type="text" id="editUserAddress" value="${userProfileData.address || ''}" placeholder="Via Roma 123">
+                    </div>
+                    
+                    <button type="button" class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="updateUserProfile()">
+                        <i class="fas fa-save"></i> Salva Modifiche
+                    </button>
+                    
+                    <button type="button" class="btn btn-warning" style="width: 100%; margin-top: 10px;" onclick="openChangePasswordModal()">
+                        <i class="fas fa-key"></i> Cambia Password
+                    </button>
+                    
+                    <button type="button" class="btn btn-danger" style="width: 100%; margin-top: 10px;" onclick="deleteUserAccount()">
+                        <i class="fas fa-trash"></i> Elimina Account
+                    </button>
+                    
+                    <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="closeAuthModal()">
+                        Chiudi
+                    </button>
+                </form>
+            `;
+            
+            document.getElementById('authModal').style.display = 'flex';
+        }
+        
+        // Open change password modal
+        function openChangePasswordModal() {
+            const authContent = document.getElementById('authContent');
+            authContent.innerHTML = `
+                <h2 style="color: var(--primary); margin-bottom: 20px;">Cambia Password</h2>
+                <p style="margin-bottom: 20px;">Inserisci la tua password attuale e la nuova password.</p>
+                
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Password Attuale *</label>
+                        <input type="password" id="currentPassword" required placeholder="••••••••">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword">Nuova Password (min. 6 caratteri) *</label>
+                        <input type="password" id="newPassword" required placeholder="••••••••">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Conferma Nuova Password *</label>
+                        <input type="password" id="confirmNewPassword" required placeholder="••••••••">
+                    </div>
+                    
+                    <button type="button" class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="changePassword()">
+                        <i class="fas fa-key"></i> Cambia Password
+                    </button>
+                    
+                    <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="openEditUserProfileModal()">
+                        <i class="fas fa-arrow-left"></i> Torna al Profilo
+                    </button>
+                </form>
+            `;
+        }
+        
+        // Update user profile
+        async function updateUserProfile() {
+            if (!currentUser || !userProfileData) {
+                alert('Errore nel caricamento del profilo');
+                return;
+            }
+            
+            const profileData = {
+                phone: document.getElementById('editUserPhone').value,
+                full_name: document.getElementById('editUserFullName').value,
+                address: document.getElementById('editUserAddress').value,
+                updated_at: new Date()
+            };
+            
+            if (!profileData.phone) {
+                alert('Il numero di telefono è obbligatorio');
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .update(profileData)
+                    .eq('id', currentUser.id)
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                userProfileData = data;
+                closeAuthModal();
+                
+                showMessage('success', 'Profilo aggiornato con successo!');
+                
+            } catch (error) {
+                console.error('Update user profile error:', error);
+                alert('Errore nell\'aggiornamento del profilo: ' + error.message);
+            }
+        }
+        
+        // Change password
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                alert('Per favore compila tutti i campi');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('La nuova password deve avere almeno 6 caratteri');
+                return;
+            }
+            
+            if (newPassword !== confirmNewPassword) {
+                alert('Le nuove password non corrispondono');
+                return;
+            }
+            
+            try {
+                // First verify current password by trying to sign in
+                const { error: signInError } = await supabase.auth.signInWithPassword({
+                    email: currentUser.email,
+                    password: currentPassword
+                });
+                
+                if (signInError) {
+                    alert('Password attuale non corretta');
+                    return;
+                }
+                
+                // Update password
+                const { error: updateError } = await supabase.auth.updateUser({
+                    password: newPassword
+                });
+                
+                if (updateError) throw updateError;
+                
+                closeAuthModal();
+                showMessage('success', 'Password cambiata con successo!');
+                
+            } catch (error) {
+                console.error('Change password error:', error);
+                alert('Errore nel cambio password: ' + error.message);
+            }
+        }
+        
+        // Delete user account
+        async function deleteUserAccount() {
+            if (!currentUser) {
+                alert('Errore nel caricamento dell\'account');
+                return;
+            }
+            
+            if (!confirm('ATTENZIONE: Stai per eliminare definitivamente il tuo account. Questa azione cancellerà anche il tuo profilo caregiver se presente. L\'azione è irreversibile. Sei sicuro?')) {
+                return;
+            }
+            
+            try {
+                // Delete caregiver profile if exists
+                if (currentCaregiverProfile) {
+                    const { error: caregiverError } = await supabase
+                        .from('caregiver_profiles')
+                        .delete()
+                        .eq('user_id', currentUser.id);
+                    
+                    if (caregiverError) throw caregiverError;
+                }
+                
+                // Delete user profile
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .delete()
+                    .eq('id', currentUser.id);
+                
+                if (profileError) throw profileError;
+                
+                // Delete auth user (this might require server-side function)
+                // For now, we'll sign out and show message
+                await supabase.auth.signOut();
+                
+                currentUser = null;
+                currentCaregiverProfile = null;
+                userProfileData = null;
+                updateUIForLoggedOutUser();
+                closeAuthModal();
+                
+                showMessage('success', 'Account eliminato con successo!');
+                
+            } catch (error) {
+                console.error('Delete user account error:', error);
+                alert('Errore nell\'eliminazione dell\'account: ' + error.message);
+            }
+        }
+        
+        // Open create profile modal
         function openCreateProfileModal() {
             if (!currentUser) {
                 alert('Per favore accedi prima di creare un profilo caregiver');
@@ -1528,12 +1628,6 @@
                         <textarea id="caregiverEducation" placeholder="Diplomi, corsi, certificazioni..."></textarea>
                     </div>
                     
-                    <div class="commission-notice">
-                        <strong>Nota importante:</strong>
-                        <p style="margin-top: 5px;">• Per ogni servizio completato, viene applicata una commissione del 10%</p>
-                        <p>• Il pagamento viene rilasciato solo al completamento del servizio</p>
-                    </div>
-                    
                     <div class="form-group">
                         <label>
                             <input type="checkbox" id="caregiverPublished" checked>
@@ -1554,11 +1648,10 @@
             document.getElementById('authModal').style.display = 'flex';
         }
         
-        // Apri modal modifica profilo
+        // Open edit profile modal
         function openEditProfileModal() {
             if (!currentUser || !currentCaregiverProfile) {
-                // Se non ha profilo, mostra creazione
-                openCreateProfileModal();
+                alert('Errore nel caricamento del profilo');
                 return;
             }
             
@@ -1628,18 +1721,12 @@
                         </label>
                     </div>
                     
-                    <div class="commission-notice">
-                        <strong>Nota importante:</strong>
-                        <p style="margin-top: 5px;">• Per ogni servizio completato, viene applicata una commissione del 10%</p>
-                        <p>• Il pagamento viene rilasciato solo al completamento del servizio</p>
-                    </div>
-                    
                     <button type="button" class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="updateCaregiverProfile()">
                         <i class="fas fa-save"></i> Salva Modifiche
                     </button>
                     
                     <button type="button" class="btn btn-warning" style="width: 100%; margin-top: 10px;" onclick="deleteCaregiverProfile()">
-                        <i class="fas fa-trash"></i> Elimina Profilo
+                        <i class="fas fa-trash"></i> Elimina Profilo Caregiver
                     </button>
                     
                     <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="closeAuthModal()">
@@ -1651,15 +1738,14 @@
             document.getElementById('authModal').style.display = 'flex';
         }
         
-        // Crea profilo caregiver (simulato)
-        function createCaregiverProfile() {
+        // Create caregiver profile
+        async function createCaregiverProfile() {
             if (!currentUser) {
                 alert('Per favore accedi prima di creare un profilo');
                 return;
             }
             
             const profileData = {
-                id: 'profile-' + Date.now(),
                 user_id: currentUser.id,
                 name: document.getElementById('caregiverName').value,
                 experience: document.getElementById('caregiverExperience').value,
@@ -1671,9 +1757,7 @@
                 specializations: document.getElementById('caregiverSpecializations').value.split(',').map(s => s.trim()).filter(s => s),
                 description: document.getElementById('caregiverDescription').value,
                 education: document.getElementById('caregiverEducation').value,
-                is_published: document.getElementById('caregiverPublished').checked,
-                rating: 0,
-                total_reviews: 0
+                is_published: document.getElementById('caregiverPublished').checked
             };
             
             if (!profileData.name || !profileData.city) {
@@ -1681,28 +1765,36 @@
                 return;
             }
             
-            // Simulazione salvataggio
-            currentCaregiverProfile = profileData;
-            
-            // Aggiungi alla lista mock
-            mockCaregivers.push(profileData);
-            
-            updateUIForLoggedInUser(currentUser);
-            closeAuthModal();
-            loadCaregiverProfiles();
-            
-            showMessage('success', 'Profilo caregiver creato con successo!');
+            try {
+                const { data, error } = await supabase
+                    .from('caregiver_profiles')
+                    .insert([profileData])
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                currentCaregiverProfile = data;
+                updateUIForLoggedInUser(currentUser, userProfileData);
+                closeAuthModal();
+                loadCaregiverProfiles();
+                
+                showMessage('success', 'Profilo caregiver creato con successo!');
+                
+            } catch (error) {
+                console.error('Create caregiver profile error:', error);
+                alert('Errore nella creazione del profilo: ' + error.message);
+            }
         }
         
-        // Aggiorna profilo caregiver (simulato)
-        function updateCaregiverProfile() {
+        // Update caregiver profile
+        async function updateCaregiverProfile() {
             if (!currentUser || !currentCaregiverProfile) {
                 alert('Errore nel caricamento del profilo');
                 return;
             }
             
             const profileData = {
-                ...currentCaregiverProfile,
                 name: document.getElementById('editCaregiverName').value,
                 experience: document.getElementById('editCaregiverExperience').value,
                 city: document.getElementById('editCaregiverCity').value,
@@ -1722,23 +1814,30 @@
                 return;
             }
             
-            // Aggiorna profilo
-            currentCaregiverProfile = profileData;
-            
-            // Aggiorna nella lista mock
-            const index = mockCaregivers.findIndex(p => p.id === currentCaregiverProfile.id);
-            if (index !== -1) {
-                mockCaregivers[index] = profileData;
+            try {
+                const { data, error } = await supabase
+                    .from('caregiver_profiles')
+                    .update(profileData)
+                    .eq('id', currentCaregiverProfile.id)
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                currentCaregiverProfile = data;
+                closeAuthModal();
+                loadCaregiverProfiles();
+                
+                showMessage('success', 'Profilo aggiornato con successo!');
+                
+            } catch (error) {
+                console.error('Update caregiver profile error:', error);
+                alert('Errore nell\'aggiornamento del profilo: ' + error.message);
             }
-            
-            closeAuthModal();
-            loadCaregiverProfiles();
-            
-            showMessage('success', 'Profilo aggiornato con successo!');
         }
         
-        // Elimina profilo caregiver (simulato)
-        function deleteCaregiverProfile() {
+        // Delete caregiver profile
+        async function deleteCaregiverProfile() {
             if (!currentUser || !currentCaregiverProfile) {
                 alert('Errore nel caricamento del profilo');
                 return;
@@ -1748,273 +1847,126 @@
                 return;
             }
             
-            // Rimuovi dalla lista mock
-            const index = mockCaregivers.findIndex(p => p.id === currentCaregiverProfile.id);
-            if (index !== -1) {
-                mockCaregivers.splice(index, 1);
+            try {
+                const { error } = await supabase
+                    .from('caregiver_profiles')
+                    .delete()
+                    .eq('id', currentCaregiverProfile.id);
+                
+                if (error) throw error;
+                
+                currentCaregiverProfile = null;
+                updateUIForLoggedInUser(currentUser, userProfileData);
+                closeAuthModal();
+                loadCaregiverProfiles();
+                
+                showMessage('success', 'Profilo caregiver eliminato con successo!');
+                
+            } catch (error) {
+                console.error('Delete caregiver profile error:', error);
+                alert('Errore nell\'eliminazione del profilo: ' + error.message);
             }
-            
-            currentCaregiverProfile = null;
-            updateUIForLoggedInUser(currentUser);
-            closeAuthModal();
-            loadCaregiverProfiles();
-            
-            showMessage('success', 'Profilo eliminato con successo!');
         }
         
-        // Visualizza profilo con recensioni
-        function viewProfile(caregiverId) {
-            currentViewingProfileId = caregiverId;
-            
-            // Trova caregiver
-            const profile = mockCaregivers.find(p => p.id === caregiverId);
-            if (!profile) {
-                alert('Profilo non trovato');
-                return;
-            }
-            
-            // Trova recensioni
-            const reviews = mockReviews[caregiverId] || [];
-            
-            const modalContent = document.getElementById('modalContent');
-            const specializations = profile.specializations || [];
-            const specializationsHTML = specializations.map(spec => 
-                `<span class="specialization-tag">${spec}</span>`
-            ).join('');
-            
-            // Formatta recensioni
-            let reviewsHTML = '';
-            if (reviews.length > 0) {
-                reviews.forEach(review => {
-                    const date = new Date(review.created_at).toLocaleDateString('it-IT');
-                    let stars = '';
-                    for (let i = 1; i <= 5; i++) {
-                        stars += i <= review.rating ? '★' : '☆';
-                    }
+        // View caregiver profile
+        async function viewProfile(caregiverId) {
+            try {
+                const { data: profile, error } = await supabase
+                    .from('caregiver_profiles')
+                    .select('*')
+                    .eq('id', caregiverId)
+                    .single();
+                
+                if (error) throw error;
+                
+                const modalContent = document.getElementById('modalContent');
+                const specializations = profile.specializations || [];
+                const specializationsHTML = specializations.map(spec => 
+                    `<span class="specialization-tag">${spec}</span>`
+                ).join('');
+                
+                modalContent.innerHTML = `
+                    <h2 style="color: var(--primary); margin-bottom: 20px;">${profile.name}</h2>
                     
-                    reviewsHTML += `
-                        <div class="review-item">
-                            <div class="review-header">
-                                <div class="review-author">
-                                    ${review.author_name}
-                                    ${review.is_verified ? '<span class="verified-badge">Verificato</span>' : ''}
-                                </div>
-                                <div class="review-date">${date}</div>
-                            </div>
-                            <div class="review-rating">${stars}</div>
-                            <div class="review-text">${review.comment}</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                        <div>
+                            <strong>Esperienza:</strong> ${profile.experience || 'Non specificata'}
                         </div>
-                    `;
-                });
-            } else {
-                reviewsHTML = `
-                    <div class="no-reviews">
-                        <p>Ancora nessuna recensione per questo caregiver.</p>
-                        ${currentUser ? '<p>Sii il primo a lasciare una recensione!</p>' : ''}
+                        <div>
+                            <strong>Zona:</strong> ${profile.zone || 'Non specificata'}, ${profile.city || ''}
+                        </div>
+                        <div>
+                            <strong>Lingue:</strong> ${profile.languages || 'Non specificate'}
+                        </div>
+                        <div>
+                            <strong>Tariffa oraria:</strong> ${profile.hourly_rate || 'Da concordare'}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--primary); margin-bottom: 10px;">Specializzazioni</h3>
+                        <div class="caregiver-specializations">
+                            ${specializationsHTML}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--primary); margin-bottom: 10px;">Disponibilità</h3>
+                        <p>${profile.availability || 'Da concordare'}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--primary); margin-bottom: 10px;">Descrizione</h3>
+                        <p>${profile.description || 'Nessuna descrizione disponibile.'}</p>
+                    </div>
+                    
+                    ${profile.education ? `
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--primary); margin-bottom: 10px;">Formazione e Certificazioni</h3>
+                        <p>${profile.education}</p>
+                    </div>
+                    ` : ''}
+                    
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--light); text-align: center;">
+                        <button class="btn btn-primary" onclick="openChat('${profile.id}')">
+                            <i class="fas fa-comments"></i> Contatta ${profile.name.split(' ')[0]} via Chat
+                        </button>
                     </div>
                 `;
+                
+                document.getElementById('profileModal').style.display = 'flex';
+                
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Errore nel caricamento del profilo');
             }
-            
-            // Controlla se l'utente corrente può lasciare una recensione
-            let reviewFormHTML = '';
-            if (currentUser && currentUser.id !== profile.user_id) {
-                // Controlla se ha già recensito
-                const hasReviewed = reviews.some(r => r.author_id === currentUser.id);
-                
-                if (!hasReviewed) {
-                    reviewFormHTML = `
-                        <div class="profile-section-title">Lascia una Recensione</div>
-                        <div class="review-form">
-                            <div class="form-group">
-                                <label for="reviewerName">Il tuo nome *</label>
-                                <input type="text" id="reviewerName" placeholder="Come vuoi apparire nelle recensioni">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Valutazione *</label>
-                                <div class="stars-rating">
-                                    <input type="radio" id="star5" name="rating" value="5">
-                                    <label for="star5">★</label>
-                                    <input type="radio" id="star4" name="rating" value="4">
-                                    <label for="star4">★</label>
-                                    <input type="radio" id="star3" name="rating" value="3">
-                                    <label for="star3">★</label>
-                                    <input type="radio" id="star2" name="rating" value="2">
-                                    <label for="star2">★</label>
-                                    <input type="radio" id="star1" name="rating" value="1">
-                                    <label for="star1">★</label>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="reviewComment">Recensione *</label>
-                                <textarea id="reviewComment" placeholder="Condividi la tua esperienza..." rows="3"></textarea>
-                            </div>
-                            
-                            <button class="btn btn-primary" onclick="submitReview('${caregiverId}')">
-                                <i class="fas fa-paper-plane"></i> Invia Recensione
-                            </button>
-                        </div>
-                    `;
-                }
-            }
-            
-            modalContent.innerHTML = `
-                <h2 style="color: var(--primary); margin-bottom: 20px;">${profile.name}</h2>
-                
-                <div style="display: flex; align-items: center; margin-bottom: 25px; background-color: var(--light); padding: 15px; border-radius: 8px;">
-                    <div style="flex: 1;">
-                        <div style="font-size: 2rem; color: var(--star); font-weight: bold; margin-bottom: 5px;">
-                            ${profile.rating ? profile.rating.toFixed(1) : '0.0'}
-                        </div>
-                        <div style="color: #666; font-size: 0.9rem;">
-                            ${profile.total_reviews || 0} recensioni
-                        </div>
-                    </div>
-                    <div style="flex: 3;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-                            <div>
-                                <strong>Esperienza:</strong> ${profile.experience || 'Non specificata'}
-                            </div>
-                            <div>
-                                <strong>Zona:</strong> ${profile.zone || 'Non specificata'}, ${profile.city || ''}
-                            </div>
-                            <div>
-                                <strong>Lingue:</strong> ${profile.languages || 'Non specificate'}
-                            </div>
-                            <div>
-                                <strong>Tariffa:</strong> ${profile.hourly_rate || 'Da concordare'}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <h3 style="color: var(--primary); margin-bottom: 10px;">Specializzazioni</h3>
-                    <div class="caregiver-specializations">
-                        ${specializationsHTML}
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <h3 style="color: var(--primary); margin-bottom: 10px;">Disponibilità</h3>
-                    <p>${profile.availability || 'Da concordare'}</p>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <h3 style="color: var(--primary); margin-bottom: 10px;">Descrizione</h3>
-                    <p>${profile.description || 'Nessuna descrizione disponibile.'}</p>
-                </div>
-                
-                ${profile.education ? `
-                <div style="margin-bottom: 25px;">
-                    <h3 style="color: var(--primary); margin-bottom: 10px;">Formazione e Certificazioni</h3>
-                    <p>${profile.education}</p>
-                </div>
-                ` : ''}
-                
-                <div class="profile-section-title">Recensioni</div>
-                <div class="reviews-container">
-                    ${reviewsHTML}
-                </div>
-                
-                ${reviewFormHTML}
-                
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--light); text-align: center;">
-                    <button class="btn btn-primary" onclick="openChat('${profile.id}')">
-                        <i class="fas fa-comments"></i> Contatta ${profile.name.split(' ')[0]} via Chat
-                    </button>
-                </div>
-            `;
-            
-            document.getElementById('profileModal').style.display = 'flex';
         }
         
-        // Invia recensione (simulata)
-        function submitReview(caregiverId) {
-            if (!currentUser) {
-                alert('Per favore accedi per lasciare una recensione');
-                openAuthModal();
-                return;
-            }
-            
-            const reviewerName = document.getElementById('reviewerName')?.value;
-            const ratingInput = document.querySelector('input[name="rating"]:checked');
-            const reviewComment = document.getElementById('reviewComment')?.value;
-            
-            if (!reviewerName || !ratingInput || !reviewComment) {
-                alert('Per favore compila tutti i campi della recensione');
-                return;
-            }
-            
-            if (reviewComment.length < 10) {
-                alert('La recensione deve contenere almeno 10 caratteri');
-                return;
-            }
-            
-            // Crea nuova recensione
-            const newReview = {
-                id: 'review-' + Date.now(),
-                caregiver_id: caregiverId,
-                author_id: currentUser.id,
-                author_name: reviewerName,
-                rating: parseInt(ratingInput.value),
-                comment: reviewComment,
-                is_verified: false,
-                created_at: new Date().toISOString()
-            };
-            
-            // Aggiungi alle recensioni mock
-            if (!mockReviews[caregiverId]) {
-                mockReviews[caregiverId] = [];
-            }
-            mockReviews[caregiverId].push(newReview);
-            
-            // Aggiorna rating del caregiver
-            const caregiver = mockCaregivers.find(p => p.id === caregiverId);
-            if (caregiver) {
-                const allReviews = mockReviews[caregiverId] || [];
-                const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
-                caregiver.rating = totalRating / allReviews.length;
-                caregiver.total_reviews = allReviews.length;
-            }
-            
-            // Ricarica la vista del profilo
-            viewProfile(caregiverId);
-            
-            showMessage('success', 'Recensione inviata con successo!');
-        }
-        
-        // Chiudi modal
+        // Close modal
         function closeModal() {
             document.getElementById('profileModal').style.display = 'none';
-            currentViewingProfileId = null;
         }
         
-        // Apri chat
+        // Open chat
         function openChat(caregiverId) {
-            if (!currentUser) {
-                alert('Per favore accedi per contattare il caregiver');
-                openAuthModal();
-                return;
-            }
-            
-            const caregiver = mockCaregivers.find(p => p.id === caregiverId);
-            
-            // Apri Tawk.to chat widget
+            // Open Tawk.to chat widget
             if (typeof Tawk_API !== 'undefined') {
                 Tawk_API.maximize();
                 
+                // Send initial message with caregiver name
                 setTimeout(() => {
-                    Tawk_API.sendMessage(`Salve, sono interessato/a a contattare ${caregiver?.name || 'Caregiver'} per informazioni sui servizi di assistenza.`);
+                    // Get caregiver name for the message
+                    const caregiverName = document.querySelector(`[data-caregiver-id="${caregiverId}"] h3`)?.textContent || 'Caregiver';
+                    Tawk_API.sendMessage(`Salve, sono interessato/a a contattare ${caregiverName} per informazioni sui servizi di assistenza.`);
                 }, 1000);
             } else {
-                alert(`Contatta ${caregiver?.name || 'il caregiver'} via email o telefono per informazioni.`);
+                alert('La chat è momentaneamente non disponibile. Riprova più tardi.');
             }
         }
         
-        // Mostra messaggio
+        // Show message
         function showMessage(type, text) {
+            // Create message element
             const message = document.createElement('div');
             message.className = type === 'success' ? 'success-message' : 'error-message';
             message.textContent = text;
@@ -2026,6 +1978,7 @@
             
             document.body.appendChild(message);
             
+            // Remove after 5 seconds
             setTimeout(() => {
                 if (message.parentNode) {
                     message.parentNode.removeChild(message);
@@ -2033,7 +1986,7 @@
             }, 5000);
         }
         
-        // Chiudi modal cliccando fuori
+        // Close modal when clicking outside
         window.onclick = function(event) {
             const profileModal = document.getElementById('profileModal');
             const authModal = document.getElementById('authModal');
