@@ -1315,61 +1315,97 @@
         
         // Register function - VERSIONE SEMPLIFICATA
         async function register() {
-            const email = document.getElementById('registerEmail').value.trim();
-            const phone = document.getElementById('registerPhone').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            
-            if (!email || !phone || !password || !confirmPassword) {
-                alert('Per favore compila tutti i campi');
-                return;
-            }
-            
-            if (password.length < 6) {
-                alert('La password deve avere almeno 6 caratteri');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                alert('Le password non corrispondono');
-                return;
-            }
-            
-            try {
-                // SOLO registrazione Auth - il profilo verrà creato al primo login
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            phone: phone
-                        }
-                    }
-                });
-                
-                if (error) {
-                    if (error.message.includes('User already registered')) {
-                        alert('Un utente con questa email è già registrato. Prova ad accedere.');
-                        switchAuthTab('login');
-                    } else {
-                        throw error;
-                    }
-                    return;
+          // Register function - VERSIONE CORRETTA
+async function register() {
+    const email = document.getElementById('registerEmail').value.trim();
+    const phone = document.getElementById('registerPhone').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('registerConfirmPassword').value;
+    
+    // Validazione
+    if (!email || !phone || !password || !confirmPassword) {
+        alert('Per favore compila tutti i campi');
+        return;
+    }
+    
+    if (!isValidEmail(email)) {
+        alert('Per favore inserisci un\'email valida');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('La password deve avere almeno 6 caratteri');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Le password non corrispondono');
+        return;
+    }
+    
+    try {
+        // Mostra messaggio di caricamento
+        const registerBtn = event.target;
+        const originalText = registerBtn.innerHTML;
+        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrazione in corso...';
+        registerBtn.disabled = true;
+        
+        // 1. Registra l'utente SOLO in Auth
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    phone: phone
                 }
-                
-                if (data.user) {
-                    alert('Registrazione completata! Controlla la tua email per confermare l\'account. Dopo la conferma, potrai accedere e completare il profilo.');
-                    switchAuthTab('login');
-                } else {
-                    alert('Registrazione completata! Attendi la conferma via email.');
-                    switchAuthTab('login');
-                }
-                
-            } catch (error) {
-                console.error('Registration error:', error);
+            }
+        });
+        
+        // Ripristina pulsante
+        registerBtn.innerHTML = originalText;
+        registerBtn.disabled = false;
+        
+        if (error) {
+            console.error('Registration auth error:', error);
+            
+            // Errori comuni
+            if (error.message.includes('User already registered')) {
+                alert('Un utente con questa email è già registrato. Prova ad accedere.');
+                switchAuthTab('login');
+            } else if (error.message.includes('Password should')) {
+                alert('La password non è abbastanza forte. Usa almeno 6 caratteri.');
+            } else if (error.message.includes('Invalid email')) {
+                alert('L\'email inserita non è valida.');
+            } else {
                 alert('Errore durante la registrazione: ' + error.message);
             }
+            return;
         }
+        
+        if (data.user) {
+            // MOSTRA SUCCESSO MA NON CREARE PROFILO QUI
+            // Il profilo sarà creato al primo login
+            alert('✅ Registrazione completata!\n\nPuoi ora accedere con le tue credenziali.\n\nSe hai richiesto la conferma email, controlla la tua casella di posta.');
+            switchAuthTab('login');
+            
+            // Pulisci i campi
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPhone').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirmPassword').value = '';
+        }
+        
+    } catch (error) {
+        console.error('Unexpected registration error:', error);
+        alert('Errore imprevisto durante la registrazione. Riprova più tardi.');
+    }
+}
+
+// Funzione helper per validare email
+function isValidEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
         
         // Reset password
         async function resetPassword() {
