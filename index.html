@@ -888,13 +888,215 @@
             gap: 4px;
         }
         
-        .star-rating {
-            display: inline-flex;
-            gap: 2px;
+        /* Rating categories styles */
+        .rating-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
-        .star-rating i {
+        .rating-category {
+            text-align: center;
+        }
+        
+        .rating-category h4 {
+            color: var(--dark);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .rating-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .rating-stars i {
             color: var(--star);
+            font-size: 0.9rem;
+        }
+        
+        .rating-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .category-rating {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .category-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        .category-stars {
+            display: flex;
+            gap: 3px;
+        }
+        
+        .category-stars i {
+            color: var(--star);
+            font-size: 0.9rem;
+        }
+        
+        .category-score {
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 30px;
+            text-align: right;
+        }
+        
+        /* Feedback form categories */
+        .rating-category-form {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .category-rating-input {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .category-rating-input i {
+            font-size: 1.2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .category-rating-input i:hover {
+            color: var(--star);
+        }
+        
+        .category-rating-input i.active {
+            color: var(--star);
+        }
+        
+        .category-description {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Overall rating summary */
+        .overall-rating {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .overall-score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .overall-stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .overall-stars i {
+            font-size: 1.5rem;
+        }
+        
+        .total-reviews {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Review filters */
+        .review-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 12px;
+            background: var(--light);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .filter-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        /* Review stats */
+        .review-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
         }
     </style>
 </head>
@@ -1096,8 +1298,20 @@
         // State variables
         let currentUser = null;
         let currentCaregiverProfile = null;
-        let selectedRating = 0;
-        let tempRating = 0;
+        let selectedCategoryRatings = {};
+        let tempCategoryRatings = {};
+        
+        // Definizione delle categorie di valutazione professionali
+        const ratingCategories = {
+            overall: { name: 'Valutazione Complessiva', description: 'Giudizio generale sul caregiver' },
+            professionalism: { name: 'Professionalità', description: 'Competenza, puntualità, affidabilità' },
+            empathy: { name: 'Empatia e Relazione', description: 'Capacità di creare un rapporto positivo' },
+            skills: { name: 'Competenze Tecniche', description: 'Abilità specifiche di assistenza' },
+            communication: { name: 'Comunicazione', description: 'Chiarezza nella comunicazione con la famiglia' },
+            reliability: { name: 'Affidabilità', description: 'Costanza e serietà nel servizio' },
+            flexibility: { name: 'Flessibilità', description: 'Adattabilità a diverse situazioni' },
+            problem_solving: { name: 'Problem Solving', description: 'Gestione di situazioni impreviste' }
+        };
         
         // Mobile menu functions
         function toggleMobileMenu() {
@@ -1218,7 +1432,22 @@
                 }
                 
                 let resultsHTML = '';
-                caregiverProfiles.forEach(profile => {
+                for (const profile of caregiverProfiles) {
+                    // Calcola il rating medio per ogni caregiver
+                    const { data: feedback } = await supabase
+                        .from('caregiver_feedback')
+                        .select('ratings')
+                        .eq('caregiver_id', profile.id);
+                    
+                    let averageRating = 'Nuovo';
+                    if (feedback && feedback.length > 0) {
+                        const totalRatings = feedback.filter(f => f.ratings?.overall);
+                        if (totalRatings.length > 0) {
+                            const sum = totalRatings.reduce((acc, f) => acc + (f.ratings.overall || 0), 0);
+                            averageRating = (sum / totalRatings.length).toFixed(1);
+                        }
+                    }
+                    
                     const specializations = profile.specializations || [];
                     const specializationsHTML = specializations.map(spec => 
                         `<span class="specialization-tag">${spec}</span>`
@@ -1227,7 +1456,7 @@
                     resultsHTML += `
                         <div class="caregiver-card" data-caregiver-id="${profile.id}">
                             <div class="caregiver-rating">
-                                <i class="fas fa-star"></i> ${profile.rating || 'Nuovo'}
+                                <i class="fas fa-star"></i> ${averageRating}
                             </div>
                             <div class="caregiver-info">
                                 <h3>${profile.name}</h3>
@@ -1260,7 +1489,7 @@
                             </div>
                         </div>
                     `;
-                });
+                }
                 
                 resultsList.innerHTML = resultsHTML;
                 
@@ -1312,7 +1541,22 @@
                         }
                         
                         let resultsHTML = '';
-                        caregiverProfiles.forEach(profile => {
+                        for (const profile of caregiverProfiles) {
+                            // Calcola il rating medio per ogni caregiver
+                            const { data: feedback } = await supabase
+                                .from('caregiver_feedback')
+                                .select('ratings')
+                                .eq('caregiver_id', profile.id);
+                            
+                            let averageRating = 'Nuovo';
+                            if (feedback && feedback.length > 0) {
+                                const totalRatings = feedback.filter(f => f.ratings?.overall);
+                                if (totalRatings.length > 0) {
+                                    const sum = totalRatings.reduce((acc, f) => acc + (f.ratings.overall || 0), 0);
+                                    averageRating = (sum / totalRatings.length).toFixed(1);
+                                }
+                            }
+                            
                             const specializations = profile.specializations || [];
                             const specializationsHTML = specializations.map(spec => 
                                 `<span class="specialization-tag">${spec}</span>`
@@ -1321,7 +1565,7 @@
                             resultsHTML += `
                                 <div class="caregiver-card" data-caregiver-id="${profile.id}">
                                     <div class="caregiver-rating">
-                                        <i class="fas fa-star"></i> ${profile.rating || 'Nuovo'}
+                                        <i class="fas fa-star"></i> ${averageRating}
                                     </div>
                                     <div class="caregiver-info">
                                         <h3>${profile.name}</h3>
@@ -1354,7 +1598,7 @@
                                     </div>
                                 </div>
                             `;
-                        });
+                        }
                         
                         resultsList.innerHTML = resultsHTML;
                         
@@ -1530,7 +1774,6 @@
             }
             
             try {
-                // Disabilita la conferma email
                 const { data, error } = await supabase.auth.signUp({
                     email: email,
                     password: password,
@@ -1813,6 +2056,10 @@
                         <i class="fas fa-file-alt"></i> Gestisci Referenze
                     </button>
                     
+                    <button type="button" class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="openFeedbackSettingsModal()">
+                        <i class="fas fa-star"></i> Gestisci Sezioni Valutazioni
+                    </button>
+                    
                     <button type="button" class="btn btn-warning" style="width: 100%; margin-top: 10px;" onclick="deleteCaregiverProfile()">
                         <i class="fas fa-trash"></i> Elimina Profilo
                     </button>
@@ -1958,7 +2205,7 @@
             }
         }
         
-        // View caregiver profile with feedback and references
+        // View caregiver profile with detailed feedback system
         async function viewProfile(caregiverId) {
             try {
                 // Carica il profilo del caregiver
@@ -1970,7 +2217,7 @@
                 
                 if (profileError) throw profileError;
                 
-                // Carica i feedback/recensioni
+                // Carica i feedback/recensioni con le valutazioni complete
                 const { data: feedback, error: feedbackError } = await supabase
                     .from('caregiver_feedback')
                     .select('*')
@@ -1994,70 +2241,26 @@
                     `<span class="specialization-tag">${spec}</span>`
                 ).join('');
                 
-                // Calcola rating medio se ci sono feedback
-                let averageRating = profile.rating || 'Nuovo';
-                let feedbackCount = 0;
-                if (feedback && feedback.length > 0) {
-                    const validFeedbacks = feedback.filter(item => item.rating && item.rating > 0);
-                    feedbackCount = validFeedbacks.length;
-                    if (feedbackCount > 0) {
-                        const totalRating = validFeedbacks.reduce((sum, item) => sum + (item.rating || 0), 0);
-                        averageRating = (totalRating / feedbackCount).toFixed(1);
-                    }
-                }
+                // Calcola le statistiche delle valutazioni
+                const ratingStats = calculateRatingStats(feedback);
                 
-                // Genera HTML per le stelle
-                function generateStars(rating) {
-                    if (!rating || rating === 0) return '<span style="color: #666;">Nessuna valutazione</span>';
-                    
-                    let stars = '';
-                    const fullStars = Math.floor(rating);
-                    const hasHalfStar = rating % 1 >= 0.5;
-                    
-                    for (let i = 0; i < fullStars; i++) {
-                        stars += '<i class="fas fa-star" style="color: var(--star); margin-right: 2px;"></i>';
-                    }
-                    
-                    if (hasHalfStar) {
-                        stars += '<i class="fas fa-star-half-alt" style="color: var(--star); margin-right: 2px;"></i>';
-                    }
-                    
-                    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-                    for (let i = 0; i < emptyStars; i++) {
-                        stars += '<i class="far fa-star" style="color: var(--star); margin-right: 2px;"></i>';
-                    }
-                    
-                    return stars;
-                }
+                // Genera HTML per le statistiche delle valutazioni
+                const ratingSummaryHTML = generateRatingSummaryHTML(ratingStats, feedback?.length || 0);
+                
+                // Genera HTML per la distribuzione delle categorie
+                const categoryRatingsHTML = generateCategoryRatingsHTML(ratingStats);
                 
                 // Prepara HTML per i feedback
                 let feedbackHTML = '';
                 if (feedback && feedback.length > 0) {
-                    feedback.forEach(item => {
-                        const stars = generateStars(item.rating);
-                        const date = new Date(item.created_at).toLocaleDateString('it-IT');
-                        
-                        feedbackHTML += `
-                            <div class="feedback-item">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                    <div>
-                                        <div style="font-weight: 600; color: var(--dark);">${item.user_id ? 'Utente verificato' : 'Recensione'}</div>
-                                        <div style="margin: 5px 0;">${stars}</div>
-                                    </div>
-                                    <div style="color: #666; font-size: 0.85rem;">${date}</div>
-                                </div>
-                                <div style="line-height: 1.5; font-size: 0.95rem; margin-top: 10px;">${item.comment || 'Nessun commento'}</div>
-                                ${item.is_verified ? '<div style="margin-top: 5px;"><small style="color: var(--success);"><i class="fas fa-check-circle"></i> Verificato</small></div>' : ''}
-                            </div>
-                        `;
-                    });
+                    feedbackHTML = generateDetailedFeedbackHTML(feedback);
                 } else {
                     feedbackHTML = `
                         <div style="text-align: center; padding: 20px; color: #666;">
                             <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
                             <p>Nessuna recensione disponibile</p>
                             ${currentUser && currentUser.id !== profile.user_id ? 
-                                `<button class="btn btn-outline" style="margin-top: 10px;" onclick="openFeedbackModal('${profile.id}', '${profile.name}')">
+                                `<button class="btn btn-outline" style="margin-top: 10px;" onclick="openDetailedFeedbackModal('${profile.id}', '${profile.name}')">
                                     <i class="fas fa-pen"></i> Lascia una recensione
                                 </button>` : ''}
                         </div>
@@ -2107,7 +2310,7 @@
                 modalContent.innerHTML = `
                     <div style="position: relative;">
                         <div class="caregiver-rating" style="position: absolute; top: 0; right: 0;">
-                            <i class="fas fa-star"></i> ${averageRating} ${feedbackCount > 0 ? `(${feedbackCount})` : ''}
+                            <i class="fas fa-star"></i> ${ratingStats.overall.average.toFixed(1)} (${feedback?.length || 0})
                         </div>
                         
                         <h2 style="color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; padding-right: 80px;">${profile.name}</h2>
@@ -2151,19 +2354,44 @@
                         </div>
                         ` : ''}
                         
-                        <!-- Sezione Feedback/Recensioni -->
+                        <!-- Sezione Valutazioni Sintetiche -->
                         <div style="margin: 30px 0; padding-top: 20px; border-top: 2px solid var(--light);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h3 style="color: var(--primary); font-size: 1.2rem;">
-                                    <i class="fas fa-star"></i> Recensioni (${feedbackCount})
+                                    <i class="fas fa-chart-bar"></i> Valutazioni Sintetiche
                                 </h3>
                                 ${currentUser && currentUser.id !== profile.user_id ? 
-                                    `<button class="btn btn-outline" style="padding: 8px 12px; font-size: 0.9rem;" onclick="openFeedbackModal('${profile.id}', '${profile.name}')">
-                                        <i class="fas fa-pen"></i> Scrivi recensione
+                                    `<button class="btn btn-outline" style="padding: 8px 12px; font-size: 0.9rem;" onclick="openDetailedFeedbackModal('${profile.id}', '${profile.name}')">
+                                        <i class="fas fa-pen"></i> Lascia una recensione
                                     </button>` : ''}
                             </div>
                             
-                            <div id="feedback-section" style="max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                            ${ratingSummaryHTML}
+                            
+                            <!-- Statistiche per Categoria -->
+                            <div style="margin-top: 25px;">
+                                <h4 style="color: var(--dark); margin-bottom: 15px; font-size: 1.1rem;">Valutazioni per Categoria</h4>
+                                ${categoryRatingsHTML}
+                            </div>
+                        </div>
+                        
+                        <!-- Sezione Recensioni Dettagliate -->
+                        <div style="margin: 30px 0; padding-top: 20px; border-top: 2px solid var(--light);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="color: var(--primary); font-size: 1.2rem;">
+                                    <i class="fas fa-comments"></i> Recensioni Dettagliate (${feedback?.length || 0})
+                                </h3>
+                                <div class="review-filters" id="reviewFilters">
+                                    <button class="filter-btn active" onclick="filterReviews('all')">Tutte</button>
+                                    <button class="filter-btn" onclick="filterReviews('5')">5 stelle</button>
+                                    <button class="filter-btn" onclick="filterReviews('4')">4 stelle</button>
+                                    <button class="filter-btn" onclick="filterReviews('3')">3 stelle</button>
+                                    <button class="filter-btn" onclick="filterReviews('2')">2 stelle</button>
+                                    <button class="filter-btn" onclick="filterReviews('1')">1 stella</button>
+                                </div>
+                            </div>
+                            
+                            <div id="feedback-section" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
                                 ${feedbackHTML}
                             </div>
                         </div>
@@ -2193,10 +2421,221 @@
                 document.getElementById('profileModal').style.display = 'flex';
                 closeMobileMenu();
                 
+                // Salva i dati per il filtraggio
+                window.currentFeedbackData = feedback;
+                
             } catch (error) {
                 console.error('Error loading profile:', error);
                 alert('Errore nel caricamento del profilo');
             }
+        }
+        
+        // Calcola statistiche delle valutazioni
+        function calculateRatingStats(feedback) {
+            const stats = {
+                overall: { total: 0, count: 0, average: 0 },
+                professionalism: { total: 0, count: 0, average: 0 },
+                empathy: { total: 0, count: 0, average: 0 },
+                skills: { total: 0, count: 0, average: 0 },
+                communication: { total: 0, count: 0, average: 0 },
+                reliability: { total: 0, count: 0, average: 0 },
+                flexibility: { total: 0, count: 0, average: 0 },
+                problem_solving: { total: 0, count: 0, average: 0 }
+            };
+            
+            const starDistribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+            
+            if (feedback && feedback.length > 0) {
+                feedback.forEach(item => {
+                    if (item.ratings) {
+                        // Calcola distribuzione stelle
+                        const overallRating = Math.round(item.ratings.overall || 0);
+                        if (overallRating >= 1 && overallRating <= 5) {
+                            starDistribution[overallRating]++;
+                        }
+                        
+                        // Calcola medie per categoria
+                        Object.keys(stats).forEach(category => {
+                            if (item.ratings[category]) {
+                                stats[category].total += item.ratings[category];
+                                stats[category].count++;
+                            }
+                        });
+                    }
+                });
+                
+                // Calcola medie
+                Object.keys(stats).forEach(category => {
+                    if (stats[category].count > 0) {
+                        stats[category].average = stats[category].total / stats[category].count;
+                    }
+                });
+            }
+            
+            return { ...stats, starDistribution };
+        }
+        
+        // Genera HTML per il riepilogo valutazioni
+        function generateRatingSummaryHTML(stats, totalReviews) {
+            if (totalReviews === 0) {
+                return `
+                    <div style="text-align: center; padding: 20px; color: #666;">
+                        <p>Nessuna valutazione disponibile</p>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="overall-rating">
+                    <div class="overall-score">${stats.overall.average.toFixed(1)}</div>
+                    <div class="overall-stars">
+                        ${generateStarsHTML(stats.overall.average, 1.5)}
+                    </div>
+                    <div class="total-reviews">Basato su ${totalReviews} recensioni</div>
+                </div>
+                
+                <div class="review-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Eccellente (5 stelle)</div>
+                        <div class="stat-value">${stats.starDistribution[5] || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Buono (4 stelle)</div>
+                        <div class="stat-value">${stats.starDistribution[4] || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Discreto (3 stelle)</div>
+                        <div class="stat-value">${stats.starDistribution[3] || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Sufficiente (2 stelle)</div>
+                        <div class="stat-value">${stats.starDistribution[2] || 0}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Scarso (1 stella)</div>
+                        <div class="stat-value">${stats.starDistribution[1] || 0}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Genera HTML per le valutazioni per categoria
+        function generateCategoryRatingsHTML(stats) {
+            const categories = ['professionalism', 'empathy', 'skills', 'communication', 'reliability', 'flexibility', 'problem_solving'];
+            
+            let html = '';
+            categories.forEach(category => {
+                if (stats[category].count > 0) {
+                    html += `
+                        <div class="category-rating">
+                            <div class="category-label">${ratingCategories[category].name}</div>
+                            <div class="category-stars">
+                                ${generateStarsHTML(stats[category].average, 0.9)}
+                            </div>
+                            <div class="category-score">${stats[category].average.toFixed(1)}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            return html || '<p style="color: #666; text-align: center;">Nessuna valutazione per categoria disponibile</p>';
+        }
+        
+        // Genera HTML per feedback dettagliati
+        function generateDetailedFeedbackHTML(feedback) {
+            return feedback.map(item => {
+                const date = new Date(item.created_at).toLocaleDateString('it-IT');
+                const overallRating = item.ratings?.overall || 0;
+                
+                let categoryRatingsHTML = '';
+                if (item.ratings) {
+                    Object.keys(item.ratings).forEach(category => {
+                        if (category !== 'overall' && ratingCategories[category]) {
+                            const rating = item.ratings[category];
+                            categoryRatingsHTML += `
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 0.85rem;">
+                                    <span style="color: #666;">${ratingCategories[category].name}:</span>
+                                    <span style="font-weight: 600; color: var(--primary);">${rating}/5</span>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                return `
+                    <div class="feedback-item" data-rating="${Math.round(overallRating)}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--dark);">${item.user_id ? 'Utente verificato' : 'Recensione'}</div>
+                                <div style="display: flex; align-items: center; gap: 5px; margin-top: 5px;">
+                                    <div style="color: var(--star);">${generateStarsHTML(overallRating, 1)}</div>
+                                    <span style="font-weight: bold; color: var(--primary);">${overallRating.toFixed(1)}</span>
+                                </div>
+                            </div>
+                            <div style="color: #666; font-size: 0.85rem;">${date}</div>
+                        </div>
+                        
+                        ${categoryRatingsHTML ? `
+                            <div style="background: white; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #eee;">
+                                <div style="font-weight: 600; color: var(--dark); margin-bottom: 5px; font-size: 0.9rem;">Valutazioni per categoria:</div>
+                                ${categoryRatingsHTML}
+                            </div>
+                        ` : ''}
+                        
+                        ${item.comment ? `
+                            <div style="line-height: 1.5; font-size: 0.95rem; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                                <div style="font-weight: 600; color: var(--dark); margin-bottom: 5px;">Commento:</div>
+                                <div>${item.comment}</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${item.is_verified ? '<div style="margin-top: 10px;"><small style="color: var(--success);"><i class="fas fa-check-circle"></i> Recensione verificata</small></div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Genera HTML per le stelle
+        function generateStarsHTML(rating, size = 1) {
+            if (!rating || rating === 0) return '<span style="color: #666;">Nessuna valutazione</span>';
+            
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += `<i class="fas fa-star" style="color: var(--star); font-size: ${size}rem;"></i>`;
+            }
+            
+            if (hasHalfStar) {
+                stars += `<i class="fas fa-star-half-alt" style="color: var(--star); font-size: ${size}rem;"></i>`;
+            }
+            
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += `<i class="far fa-star" style="color: var(--star); font-size: ${size}rem;"></i>`;
+            }
+            
+            return stars;
+        }
+        
+        // Filtra le recensioni
+        function filterReviews(rating) {
+            const feedbackItems = document.querySelectorAll('.feedback-item');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            // Aggiorna bottoni attivi
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filtra le recensioni
+            feedbackItems.forEach(item => {
+                if (rating === 'all' || item.getAttribute('data-rating') === rating) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         }
         
         // Close modal
@@ -2268,152 +2707,7 @@
             }
         });
         
-        // FUNZIONI PER REFERENZE E FEEDBACK
-        
-        // Open feedback modal
-        function openFeedbackModal(caregiverId, caregiverName) {
-            if (!currentUser) {
-                alert('Per favore accedi per lasciare una recensione');
-                openAuthModal();
-                return;
-            }
-            
-            const authContent = document.getElementById('authContent');
-            authContent.innerHTML = `
-                <h2 style="color: var(--primary); margin-bottom: 15px; font-size: 1.4rem;">Lascia una recensione per ${caregiverName}</h2>
-                
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label>Valutazione *</label>
-                    <div id="rating-stars" style="display: flex; gap: 5px; margin-top: 8px;">
-                        ${[1,2,3,4,5].map(star => `
-                            <i class="far fa-star" 
-                               style="font-size: 2rem; color: #ddd; cursor: pointer;" 
-                               data-rating="${star}"
-                               onmouseover="hoverStarFeedback(${star})"
-                               onmouseout="resetStarsFeedback()"
-                               onclick="selectStarFeedback(${star})"></i>
-                        `).join('')}
-                    </div>
-                    <div id="rating-text" style="margin-top: 10px; color: var(--primary); font-weight: 600;"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="feedbackComment">Commento (opzionale)</label>
-                    <textarea id="feedbackComment" placeholder="Condividi la tua esperienza con questo caregiver..." style="min-height: 100px;"></textarea>
-                </div>
-                
-                <div class="form-group" style="margin-top: 10px;">
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="feedbackVerified" style="width: 18px; height: 18px;">
-                        <span>La mia recensione è verificabile</span>
-                    </label>
-                </div>
-                
-                <button class="btn btn-success" style="width: 100%; margin-top: 15px;" onclick="submitFeedback('${caregiverId}')">
-                    <i class="fas fa-paper-plane"></i> Invia Recensione
-                </button>
-                
-                <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="closeAuthModal()">
-                    Annulla
-                </button>
-            `;
-            
-            // Reset rating variables
-            selectedRating = 0;
-            tempRating = 0;
-            updateStarsDisplayFeedback();
-            
-            document.getElementById('authModal').style.display = 'flex';
-        }
-        
-        // Funzioni helper per le stelle nel feedback
-        function hoverStarFeedback(rating) {
-            tempRating = rating;
-            updateStarsDisplayFeedback();
-        }
-        
-        function resetStarsFeedback() {
-            tempRating = selectedRating;
-            updateStarsDisplayFeedback();
-        }
-        
-        function selectStarFeedback(rating) {
-            selectedRating = rating;
-            tempRating = rating;
-            updateStarsDisplayFeedback();
-        }
-        
-        function updateStarsDisplayFeedback() {
-            const stars = document.querySelectorAll('#rating-stars i');
-            const ratingText = document.getElementById('rating-text');
-            
-            stars.forEach(star => {
-                const starRating = parseInt(star.getAttribute('data-rating'));
-                if (starRating <= tempRating) {
-                    star.className = 'fas fa-star';
-                    star.style.color = 'var(--star)';
-                } else {
-                    star.className = 'far fa-star';
-                    star.style.color = '#ddd';
-                }
-            });
-            
-            // Testo descrittivo per la valutazione
-            const ratings = {
-                1: 'Scarso',
-                2: 'Discreto',
-                3: 'Buono',
-                4: 'Molto buono',
-                5: 'Eccellente'
-            };
-            
-            if (tempRating > 0) {
-                ratingText.textContent = `${ratings[tempRating]} (${tempRating}/5)`;
-            } else {
-                ratingText.textContent = 'Seleziona una valutazione';
-            }
-        }
-        
-        // Submit feedback
-        async function submitFeedback(caregiverId) {
-            if (!currentUser) {
-                alert('Per favore accedi per lasciare una recensione');
-                return;
-            }
-            
-            if (!selectedRating || selectedRating === 0) {
-                alert('Per favore seleziona una valutazione');
-                return;
-            }
-            
-            const feedbackData = {
-                caregiver_id: caregiverId,
-                user_id: currentUser.id,
-                rating: selectedRating,
-                comment: document.getElementById('feedbackComment').value,
-                is_verified: document.getElementById('feedbackVerified').checked
-            };
-            
-            try {
-                const { data, error } = await supabase
-                    .from('caregiver_feedback')
-                    .insert([feedbackData])
-                    .select()
-                    .single();
-                
-                if (error) throw error;
-                
-                closeAuthModal();
-                showMessage('success', 'Recensione inviata con successo!');
-                
-                // Ricarica il profilo per mostrare la nuova recensione
-                viewProfile(caregiverId);
-                
-            } catch (error) {
-                console.error('Error submitting feedback:', error);
-                alert('Errore nell\'invio della recensione: ' + error.message);
-            }
-        }
+        // FUNZIONI PER REFERENZE
         
         // Open references management modal
         async function openReferencesModal() {
@@ -2599,6 +2893,366 @@
             } catch (error) {
                 console.error('Error deleting reference:', error);
                 alert('Errore nell\'eliminazione della referenza: ' + error.message);
+            }
+        }
+        
+        // FUNZIONI PER FEEDBACK DETTAGLIATI
+        
+        // Open detailed feedback modal
+        function openDetailedFeedbackModal(caregiverId, caregiverName) {
+            if (!currentUser) {
+                alert('Per favore accedi per lasciare una recensione');
+                openAuthModal();
+                return;
+            }
+            
+            // Reset delle valutazioni
+            selectedCategoryRatings = {};
+            tempCategoryRatings = {};
+            
+            const authContent = document.getElementById('authContent');
+            
+            // Genera HTML per le categorie di valutazione
+            let categoriesHTML = '';
+            Object.keys(ratingCategories).forEach(category => {
+                categoriesHTML += `
+                    <div class="rating-category-form">
+                        <div class="category-header">
+                            <div class="category-title">${ratingCategories[category].name}</div>
+                            <div class="category-rating-input" id="${category}-rating">
+                                ${[1,2,3,4,5].map(star => `
+                                    <i class="far fa-star" 
+                                       data-category="${category}"
+                                       data-rating="${star}"
+                                       onmouseover="hoverCategoryStar('${category}', ${star})"
+                                       onmouseout="resetCategoryStars('${category}')"
+                                       onclick="selectCategoryStar('${category}', ${star})"></i>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="category-description">${ratingCategories[category].description}</div>
+                        <div id="${category}-rating-text" style="margin-top: 5px; font-size: 0.9rem; color: var(--primary);"></div>
+                    </div>
+                `;
+            });
+            
+            authContent.innerHTML = `
+                <h2 style="color: var(--primary); margin-bottom: 15px; font-size: 1.4rem;">Lascia una recensione per ${caregiverName}</h2>
+                <p style="margin-bottom: 20px; font-size: 0.95rem;">Valuta il caregiver in base alle seguenti categorie:</p>
+                
+                ${categoriesHTML}
+                
+                <div class="form-group" style="margin-top: 20px;">
+                    <label for="feedbackComment">Commento (opzionale)</label>
+                    <textarea id="feedbackComment" placeholder="Condividi la tua esperienza con questo caregiver..." style="min-height: 100px;"></textarea>
+                </div>
+                
+                <div class="form-group" style="margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="feedbackVerified" style="width: 18px; height: 18px;">
+                        <span>La mia recensione è verificabile</span>
+                    </label>
+                </div>
+                
+                <button class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="submitDetailedFeedback('${caregiverId}')">
+                    <i class="fas fa-paper-plane"></i> Invia Recensione Dettagliata
+                </button>
+                
+                <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="closeAuthModal()">
+                    Annulla
+                </button>
+            `;
+            
+            document.getElementById('authModal').style.display = 'flex';
+        }
+        
+        // Funzioni per gestire le stelle delle categorie
+        function hoverCategoryStar(category, rating) {
+            tempCategoryRatings[category] = rating;
+            updateCategoryStarsDisplay(category);
+        }
+        
+        function resetCategoryStars(category) {
+            tempCategoryRatings[category] = selectedCategoryRatings[category] || 0;
+            updateCategoryStarsDisplay(category);
+        }
+        
+        function selectCategoryStar(category, rating) {
+            selectedCategoryRatings[category] = rating;
+            tempCategoryRatings[category] = rating;
+            updateCategoryStarsDisplay(category);
+        }
+        
+        function updateCategoryStarsDisplay(category) {
+            const stars = document.querySelectorAll(`#${category}-rating i`);
+            const ratingText = document.getElementById(`${category}-rating-text`);
+            const rating = tempCategoryRatings[category] || 0;
+            
+            stars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    star.className = 'fas fa-star';
+                    star.style.color = 'var(--star)';
+                } else {
+                    star.className = 'far fa-star';
+                    star.style.color = '#ddd';
+                }
+            });
+            
+            // Testo descrittivo per la valutazione
+            const ratings = {
+                0: 'Non valutato',
+                1: 'Scarso',
+                2: 'Discreto',
+                3: 'Buono',
+                4: 'Molto buono',
+                5: 'Eccellente'
+            };
+            
+            ratingText.textContent = ratings[rating];
+        }
+        
+        // Submit detailed feedback
+        async function submitDetailedFeedback(caregiverId) {
+            if (!currentUser) {
+                alert('Per favore accedi per lasciare una recensione');
+                return;
+            }
+            
+            // Verifica che tutte le categorie siano valutate
+            const missingCategories = [];
+            Object.keys(ratingCategories).forEach(category => {
+                if (!selectedCategoryRatings[category] || selectedCategoryRatings[category] === 0) {
+                    missingCategories.push(ratingCategories[category].name);
+                }
+            });
+            
+            if (missingCategories.length > 0) {
+                alert(`Per favore valuta le seguenti categorie: ${missingCategories.join(', ')}`);
+                return;
+            }
+            
+            // Calcola la valutazione complessiva come media di tutte le categorie
+            const overallRating = Object.values(selectedCategoryRatings).reduce((a, b) => a + b, 0) / Object.keys(selectedCategoryRatings).length;
+            
+            const feedbackData = {
+                caregiver_id: caregiverId,
+                user_id: currentUser.id,
+                ratings: {
+                    overall: overallRating,
+                    ...selectedCategoryRatings
+                },
+                comment: document.getElementById('feedbackComment').value,
+                is_verified: document.getElementById('feedbackVerified').checked
+            };
+            
+            try {
+                const { data, error } = await supabase
+                    .from('caregiver_feedback')
+                    .insert([feedbackData])
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                closeAuthModal();
+                showMessage('success', 'Recensione dettagliata inviata con successo!');
+                
+                // Ricarica il profilo per mostrare la nuova recensione
+                viewProfile(caregiverId);
+                
+            } catch (error) {
+                console.error('Error submitting detailed feedback:', error);
+                alert('Errore nell\'invio della recensione: ' + error.message);
+            }
+        }
+        
+        // Open feedback settings modal (per i caregiver)
+        function openFeedbackSettingsModal() {
+            if (!currentUser || !currentCaregiverProfile) {
+                alert('Devi avere un profilo caregiver per gestire le sezioni valutazioni');
+                return;
+            }
+            
+            const authContent = document.getElementById('authContent');
+            authContent.innerHTML = `
+                <h2 style="color: var(--primary); margin-bottom: 15px; font-size: 1.4rem;">Gestisci Sezioni Valutazioni</h2>
+                <p style="margin-bottom: 20px; font-size: 0.95rem;">Personalizza le categorie di valutazione per il tuo profilo.</p>
+                
+                <div style="background: var(--light); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: var(--dark); margin-bottom: 15px; font-size: 1.1rem;">Categorie Attive</h3>
+                    
+                    <div id="active-categories">
+                        ${Object.keys(ratingCategories).map(category => `
+                            <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--primary);">${ratingCategories[category].name}</div>
+                                    <div style="font-size: 0.85rem; color: #666; margin-top: 5px;">${ratingCategories[category].description}</div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="editCategory('${category}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; color: var(--danger);" onclick="toggleCategory('${category}', false)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: var(--dark); margin-bottom: 15px; font-size: 1.1rem;">Aggiungi Nuova Categoria</h3>
+                    
+                    <div class="form-group">
+                        <label for="newCategoryName">Nome Categoria *</label>
+                        <input type="text" id="newCategoryName" placeholder="es. Puntualità, Competenze Specifiche">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newCategoryDescription">Descrizione</label>
+                        <textarea id="newCategoryDescription" placeholder="Descrivi cosa valutare in questa categoria..." style="min-height: 60px;"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-success" style="width: 100%;" onclick="addNewCategory()">
+                        <i class="fas fa-plus"></i> Aggiungi Categoria
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h3 style="color: var(--dark); margin-bottom: 15px; font-size: 1.1rem;">Categorie Predefinite</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                        ${['igiene', 'empatia', 'puntualita', 'competenza_tecnica', 'attenzione_ai_dettagli', 'problem_solving', 'flessibilita_oraria', 'disponibilita_extra'].map(cat => `
+                            <div style="background: white; padding: 15px; border-radius: 6px; text-align: center; cursor: pointer; border: 2px solid var(--light); transition: border-color 0.3s;" onclick="addPredefinedCategory('${cat}')">
+                                <div style="font-weight: 600; color: var(--primary);">${getCategoryDisplayName(cat)}</div>
+                                <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Aggiungi questa categoria</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline" style="width: 100%; margin-top: 20px;" onclick="closeAuthModal()">
+                    Chiudi
+                </button>
+            `;
+            
+            document.getElementById('authModal').style.display = 'flex';
+        }
+        
+        // Funzioni per gestire le categorie
+        function getCategoryDisplayName(categoryKey) {
+            const displayNames = {
+                'igiene': 'Igiene e Pulizia',
+                'empatia': 'Empatia',
+                'puntualita': 'Puntualità',
+                'competenza_tecnica': 'Competenza Tecnica',
+                'attenzione_ai_dettagli': 'Attenzione ai Dettagli',
+                'problem_solving': 'Problem Solving',
+                'flessibilita_oraria': 'Flessibilità Oraria',
+                'disponibilita_extra': 'Disponibilità Extra'
+            };
+            return displayNames[categoryKey] || categoryKey;
+        }
+        
+        function addPredefinedCategory(categoryKey) {
+            const newCategory = {
+                name: getCategoryDisplayName(categoryKey),
+                description: 'Categoria predefinita aggiunta automaticamente'
+            };
+            
+            // Aggiungi la nuova categoria
+            ratingCategories[categoryKey] = newCategory;
+            
+            // Mostra messaggio di successo
+            showMessage('success', `Categoria "${newCategory.name}" aggiunta con successo!`);
+            
+            // Riapri la modal per mostrare le modifiche
+            openFeedbackSettingsModal();
+        }
+        
+        function addNewCategory() {
+            const categoryName = document.getElementById('newCategoryName').value;
+            const categoryDescription = document.getElementById('newCategoryDescription').value;
+            
+            if (!categoryName.trim()) {
+                alert('Il nome della categoria è obbligatorio');
+                return;
+            }
+            
+            // Genera una chiave unica per la categoria
+            const categoryKey = categoryName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            
+            // Aggiungi la nuova categoria
+            ratingCategories[categoryKey] = {
+                name: categoryName,
+                description: categoryDescription || 'Nuova categoria di valutazione'
+            };
+            
+            // Mostra messaggio di successo
+            showMessage('success', `Categoria "${categoryName}" aggiunta con successo!`);
+            
+            // Pulisci i campi
+            document.getElementById('newCategoryName').value = '';
+            document.getElementById('newCategoryDescription').value = '';
+            
+            // Riapri la modal per mostrare le modifiche
+            openFeedbackSettingsModal();
+        }
+        
+        function editCategory(categoryKey) {
+            const category = ratingCategories[categoryKey];
+            
+            const authContent = document.getElementById('authContent');
+            authContent.innerHTML = `
+                <h2 style="color: var(--primary); margin-bottom: 15px; font-size: 1.4rem;">Modifica Categoria</h2>
+                
+                <div class="form-group">
+                    <label for="editCategoryName">Nome Categoria *</label>
+                    <input type="text" id="editCategoryName" value="${category.name}" placeholder="Nome della categoria">
+                </div>
+                
+                <div class="form-group">
+                    <label for="editCategoryDescription">Descrizione</label>
+                    <textarea id="editCategoryDescription" placeholder="Descrivi cosa valutare in questa categoria..." style="min-height: 80px;">${category.description}</textarea>
+                </div>
+                
+                <button class="btn btn-success" style="width: 100%; margin-top: 15px;" onclick="saveCategoryEdit('${categoryKey}')">
+                    <i class="fas fa-save"></i> Salva Modifiche
+                </button>
+                
+                <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="openFeedbackSettingsModal()">
+                    Annulla
+                </button>
+            `;
+        }
+        
+        function saveCategoryEdit(categoryKey) {
+            const newName = document.getElementById('editCategoryName').value;
+            const newDescription = document.getElementById('editCategoryDescription').value;
+            
+            if (!newName.trim()) {
+                alert('Il nome della categoria è obbligatorio');
+                return;
+            }
+            
+            // Aggiorna la categoria
+            ratingCategories[categoryKey] = {
+                name: newName,
+                description: newDescription
+            };
+            
+            showMessage('success', 'Categoria aggiornata con successo!');
+            openFeedbackSettingsModal();
+        }
+        
+        function toggleCategory(categoryKey, isActive) {
+            if (!isActive) {
+                if (confirm('Sei sicuro di voler rimuovere questa categoria?')) {
+                    delete ratingCategories[categoryKey];
+                    showMessage('success', 'Categoria rimossa con successo!');
+                    openFeedbackSettingsModal();
+                }
             }
         }
     </script>
