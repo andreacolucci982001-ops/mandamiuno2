@@ -323,7 +323,7 @@
             width: 100%;
             text-align: center;
             touch-action: manipulation;
-            min-height: 44px; /* Touch target size */
+            min-height: 44px;
         }
         
         .btn-primary {
@@ -564,7 +564,7 @@
         }
         
         .user-info {
-            display: none; /* Nascondi su mobile per risparmiare spazio */
+            display: none;
         }
         
         .user-avatar {
@@ -836,7 +836,7 @@
         
         /* Touch-friendly improvements */
         input, select, textarea, button {
-            font-size: 16px; /* Previene zoom su iOS */
+            font-size: 16px;
         }
         
         /* Prevent text size adjustment on orientation change */
@@ -886,6 +886,15 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+        }
+        
+        .star-rating {
+            display: inline-flex;
+            gap: 2px;
+        }
+        
+        .star-rating i {
+            color: var(--star);
         }
     </style>
 </head>
@@ -1499,7 +1508,7 @@
             }
         }
         
-        // Register function - MODIFICA PER RIMUOVERE VERIFICA EMAIL
+        // Register function
         async function register() {
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
@@ -1570,7 +1579,7 @@
                 
                 currentCaregiverProfile = caregiverProfile;
                 
-                // Show welcome message without email verification mention
+                // Show welcome message
                 showMessage('success', `Registrazione completata! Benvenuto ${email}!`);
                 
             } catch (error) {
@@ -2259,6 +2268,8 @@
             }
         });
         
+        // FUNZIONI PER REFERENZE E FEEDBACK
+        
         // Open feedback modal
         function openFeedbackModal(caregiverId, caregiverName) {
             if (!currentUser) {
@@ -2407,9 +2418,21 @@
         // Open references management modal
         async function openReferencesModal() {
             if (!currentUser || !currentCaregiverProfile) {
-                alert('Errore nel caricamento del profilo');
+                alert('Devi avere un profilo caregiver per gestire le referenze');
                 return;
             }
+            
+            const authContent = document.getElementById('authContent');
+            
+            // Mostra caricamento
+            authContent.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div class="spinner"></div>
+                    <p>Caricamento referenze...</p>
+                </div>
+            `;
+            
+            document.getElementById('authModal').style.display = 'flex';
             
             try {
                 // Carica le referenze esistenti
@@ -2420,8 +2443,6 @@
                     .order('created_at', { ascending: false });
                 
                 if (error) throw error;
-                
-                const authContent = document.getElementById('authContent');
                 
                 let referencesListHTML = '';
                 if (references && references.length > 0) {
@@ -2436,6 +2457,7 @@
                                 </div>
                                 <div style="font-size: 0.9rem; color: #666;">${ref.reference_role || ''}</div>
                                 <div style="font-size: 0.85rem; margin-top: 5px; color: #999;">${ref.description ? ref.description.substring(0, 100) + '...' : ''}</div>
+                                ${ref.is_verified ? '<div style="margin-top: 5px;"><span style="background: var(--success); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem;">Verificata</span></div>' : ''}
                             </div>
                         `;
                     });
@@ -2496,31 +2518,46 @@
                     </button>
                 `;
                 
-                document.getElementById('authModal').style.display = 'flex';
-                
             } catch (error) {
                 console.error('Error loading references:', error);
-                alert('Errore nel caricamento delle referenze');
+                authContent.innerHTML = `
+                    <div class="error-message">
+                        <p>Errore nel caricamento delle referenze: ${error.message}</p>
+                        <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="closeAuthModal()">
+                            Chiudi
+                        </button>
+                    </div>
+                `;
             }
         }
         
         // Add reference
         async function addReference() {
-            if (!currentCaregiverProfile) return;
+            if (!currentCaregiverProfile) {
+                alert('Errore: profilo caregiver non trovato');
+                return;
+            }
             
-            const referenceData = {
-                caregiver_id: currentCaregiverProfile.id,
-                reference_name: document.getElementById('referenceName').value,
-                reference_role: document.getElementById('referenceRole').value,
-                reference_contact: document.getElementById('referenceContact').value,
-                relationship: document.getElementById('referenceRelationship').value,
-                description: document.getElementById('referenceDescription').value
-            };
+            const referenceName = document.getElementById('referenceName').value;
+            const referenceRole = document.getElementById('referenceRole').value;
+            const referenceContact = document.getElementById('referenceContact').value;
+            const referenceRelationship = document.getElementById('referenceRelationship').value;
+            const referenceDescription = document.getElementById('referenceDescription').value;
             
-            if (!referenceData.reference_name) {
+            if (!referenceName.trim()) {
                 alert('Il nome della referenza è obbligatorio');
                 return;
             }
+            
+            const referenceData = {
+                caregiver_id: currentCaregiverProfile.id,
+                reference_name: referenceName,
+                reference_role: referenceRole,
+                reference_contact: referenceContact,
+                relationship: referenceRelationship,
+                description: referenceDescription,
+                is_verified: false
+            };
             
             try {
                 const { data, error } = await supabase
